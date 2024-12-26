@@ -53,3 +53,8 @@ _In_opt_ ÊÇ _In_ µÄÒ»¸ö±äÖÖ£¬±íÊ¾¸Ã²ÎÊýÊÇ¿ÉÑ¡µÄÊäÈë²ÎÊý¡£ÕâÒâÎ¶×Åº¯Êýµ÷ÓÃÕß¿ÉÒÔÑ
 opt£¨optional£©±íÊ¾¡°¿ÉÑ¡¡±£¬¼´Õâ¸ö²ÎÊý¿ÉÒÔÊÇ NULL »ò²»´«µÝ¡£Èç¹û´«µÝÁËÕâ¸ö²ÎÊý£¬º¯Êý»á¸ù¾ÝËü½øÐÐ´¦Àí£»
 Èç¹ûÎ´´«µÝ»ò´«µÝÁË NULL£¬Ôòº¯ÊýÓ¦¸ÃÄÜ¹»°²È«µØ´¦ÀíÕâÖÖÇé¿ö¡£
 
+Chap02
+ScrnSize.cpp
+º¯Êý²ÎÊýÌí¼Ó const,²»È»»á±¨´í
+int CDECL MessageBoxPrintf (const TCHAR * szCaption, const TCHAR * szFormat, ...)
+
