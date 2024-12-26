@@ -7,8 +7,10 @@
 #pragma comment(lib,"winmm.lib") 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
 
-int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                    PSTR szCmdLine, int iCmdShow)
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPWSTR    lpCmdLine,
+    _In_ int       nCmdShow)
 {
      static TCHAR szAppName[] = TEXT ("HelloWin") ;
      HWND         hwnd ;
@@ -45,7 +47,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
                           hInstance,                  // program instance handle
                           NULL) ;                     // creation parameters
      
-     ShowWindow (hwnd, iCmdShow) ;
+     ShowWindow (hwnd, nCmdShow) ;
      UpdateWindow (hwnd) ;
      
      while (GetMessage (&msg, NULL, 0, 0))
@@ -53,7 +55,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
           TranslateMessage (&msg) ;
           DispatchMessage (&msg) ;
      }
-     return msg.wParam ;
+     return (int)msg.wParam ;
 }
 
 LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
