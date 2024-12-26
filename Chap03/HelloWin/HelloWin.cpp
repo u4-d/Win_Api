@@ -2,7 +2,7 @@
    HELLOWIN.C -- Displays "Hello, Windows 98!" in client area
                  (c) Charles Petzold, 1998
   ------------------------------------------------------------*/
-#define UNICODE
+//#define UNICODE
 #include <windows.h>
 #pragma comment(lib,"winmm.lib") 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
