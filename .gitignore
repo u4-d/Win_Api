@@ -54,8 +54,10 @@ dkms.conf
 debug/
 release/
 lx/
+.vs/
 *.dep
 *.dsp
 *.dsw
 *.mak
 *.wav
+*.sln
