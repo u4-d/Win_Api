@@ -30,8 +30,8 @@ int CDECL MessageBoxPrintf (TCHAR * szCaption, TCHAR * szFormat, ...)
      return MessageBox (NULL, szBuffer, szCaption, 0) ;
 }
 
-int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                    PSTR szCmdLine, int iCmdShow) 
+int WINAPI WinMain (_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
+    _In_ PSTR szCmdLine, _In_ int iCmdShow)
 {
      int cxScreen, cyScreen ;
 
