@@ -62,9 +62,11 @@ x64/
 *.dsw
 *.mak
 *.wav
-*.sln
-*.vcxproj
-*.user
-*.filters
-*.ico
-*.rc
+
+# Visual Studio
+#*.sln
+#*.vcxproj
+#*.user
+#*.filters
+#*.ico
+#*.rc
