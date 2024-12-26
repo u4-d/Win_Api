@@ -54,6 +54,7 @@ dkms.conf
 debug/
 release/
 lx/
+test/
 .vs/
 *.dep
 *.dsp
@@ -61,4 +62,8 @@ lx/
 *.mak
 *.wav
 *.sln
-*.vcxpro*.*
+*.vcxproj
+*.user
+*.filters
+*.ico
+*.rc
