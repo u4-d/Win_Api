@@ -61,4 +61,4 @@ lx/
 *.mak
 *.wav
 *.sln
-*.vcxpro*
+*.vcxpro*.*
