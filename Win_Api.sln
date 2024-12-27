@@ -22,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "笔记", "笔记", "{855BD970-D761-461E-9A8D-D9531A46726C}"
 	ProjectSection(SolutionItems) = preProject
 		001_新winmain函数.txt = 001_新winmain函数.txt
+		002_变量首字符与类型对应表.txt = 002_变量首字符与类型对应表.txt
 	EndProjectSection
 EndProject
 Global

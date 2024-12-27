@@ -12,7 +12,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_ LPWSTR    lpCmdLine,
     _In_ int       nCmdShow)
 {
-     static TCHAR szAppName[] = TEXT ("HelloWin") ;
+     static TCHAR szAppName[] = TEXT ("HelloWin 标题") ;
      HWND         hwnd ;
      MSG          msg ;
      WNDCLASS     wndclass ;

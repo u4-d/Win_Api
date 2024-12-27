@@ -1,0 +1,16 @@
+字首		资料型态 
+c			char 或WCHAR 或TCHAR 
+by			BYTE （无正负号字元） 
+n			short 
+i			int 
+x, y		int 分别用作x座标和y座标 
+cx, cy		int 分别用作x长度和y长度；C代表「计数器」 
+b 或f		BOOL (int)；f 代表「旗标」 
+w			WORD （无正负号短整数） 
+l			LONG （长整数）
+dw			DWORD （无正负号长整数）
+fn			function（函式）
+s			string（字串） 
+sz			以位元组值0结尾的字串 
+h			代号 
+p			指标 
