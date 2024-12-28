@@ -1,0 +1,54 @@
+1.用户界面API（User Interface API）
+这类API提供了创建和管理图形用户界面的功能，包括窗口、按钮、文本框、菜单等控件的创建和控制。它涵盖了以下方面：
+
+GDI（图形设备接口）：用于绘制图形、文本、图像等。
+窗口管理：创建和管理窗口、消息处理、窗口事件等。
+消息传递系统：管理应用程序与操作系统之间的消息通信。
+窗口管理API（Window Management API）
+这类API用于创建、管理和操作Windows窗口及其元素。它包括：
+
+2.窗口创建、显示和隐藏：如 CreateWindow、ShowWindow 等。
+窗口布局与绘制：例如控制窗口的大小、位置等。
+窗口消息处理：如窗口收到的输入消息、用户交互等。
+文件系统API（File System API）
+这类API用于文件和目录操作，包括文件的读取、写入、删除、复制、重命名等功能。常用函数包括：
+
+3.文件操作：如 CreateFile、ReadFile、WriteFile、DeleteFile 等。
+目录管理：如 CreateDirectory、RemoveDirectory、FindFirstFile 等。
+内存管理API（Memory Management API）
+这些API用于内存的分配、释放和管理，帮助程序员在运行时管理内存。常见的内存管理API有：
+
+4.内存分配：如 VirtualAlloc、HeapAlloc 等。
+内存释放：如 VirtualFree、HeapFree 等。
+进程和线程管理API（Process and Thread Management API）
+这类API提供了创建和管理进程、线程的功能。包括：
+
+5.进程管理：如 CreateProcess、TerminateProcess 等。
+线程管理：如 CreateThread、ExitThread 等。
+同步机制：如互斥量（Mutex）、信号量（Semaphore）、事件（Event）等。
+网络和通信API（Networking and Communication API）
+这些API涉及与网络相关的功能，如TCP/IP通信、套接字编程、网络请求等。
+
+6.套接字编程：如 socket、bind、send、recv 等。
+Windows网络服务：如 WINSOCK（Windows Sockets）库。
+安全性和权限管理API（Security and Permissions API）
+用于管理访问控制、权限、认证等安全相关功能。包括：
+
+7.访问控制：如 AccessControl、SetSecurityInfo 等。
+身份验证和加密：如 CryptEncrypt、CryptDecrypt 等。
+系统信息和硬件API（System Information and Hardware API）
+这些API用于访问系统信息、硬件设备的状态和控制。包括：
+
+8.系统信息：如 GetSystemInfo、GlobalMemoryStatus 等。
+硬件管理：如获取磁盘信息、显示器配置、输入设备等。
+多媒体API（Multimedia API）
+这类API专注于处理音频、视频、图像等多媒体内容。例如：
+
+9.DirectX：用于游戏和多媒体应用的图形渲染、音频播放等。
+Windows音频和视频接口：如 WaveOut、DirectShow、Media Foundation 等。
+打印和文档管理API（Printing and Document Management API）
+这些API用于打印机管理和文档输出。包括：
+
+10.打印API：如 StartDoc、EndDoc 等。
+打印机设置：如 EnumPrinters、GetPrinter 等。
+
