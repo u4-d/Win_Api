@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决�
 		.clang-format = .clang-format
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SysMets2", "Chap04\SysMets2\SysMets2.vcxproj", "{916C4EA5-DE1A-4809-9359-66F14F2F6424}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -82,6 +84,14 @@ Global
 		{34BCFE02-B183-480A-B1AB-18744B47F2D4}.Release|x64.Build.0 = Release|x64
 		{34BCFE02-B183-480A-B1AB-18744B47F2D4}.Release|x86.ActiveCfg = Release|Win32
 		{34BCFE02-B183-480A-B1AB-18744B47F2D4}.Release|x86.Build.0 = Release|Win32
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424}.Debug|x64.ActiveCfg = Debug|x64
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424}.Debug|x64.Build.0 = Debug|x64
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424}.Debug|x86.ActiveCfg = Debug|Win32
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424}.Debug|x86.Build.0 = Debug|Win32
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424}.Release|x64.ActiveCfg = Release|x64
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424}.Release|x64.Build.0 = Release|x64
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424}.Release|x86.ActiveCfg = Release|Win32
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,5 +102,6 @@ Global
 		{C2AEAEC5-2799-4AD0-851F-4F58415DC463} = {71259D15-6753-48F7-B5B2-D93BAF36A966}
 		{8301F260-2178-4977-98BD-16ADF6A8BC0F} = {468AEAD8-52EF-4D2B-98ED-C681AF4218FE}
 		{34BCFE02-B183-480A-B1AB-18744B47F2D4} = {E50533D8-B6CF-4D41-B378-E12D94AABD09}
+		{916C4EA5-DE1A-4809-9359-66F14F2F6424} = {E50533D8-B6CF-4D41-B378-E12D94AABD09}
 	EndGlobalSection
 EndGlobal

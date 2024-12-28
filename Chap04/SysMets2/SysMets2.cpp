@@ -1,11 +1,12 @@
 /*----------------------------------------------------
    SYSMETS2.C -- System Metrics Display Program No. 2
-                                 (c) Charles Petzold, 1998
+                 (c) Charles Petzold, 1998
   ----------------------------------------------------*/
 
 constexpr int WINVER = 0x0500;
-#include "sysmets.h"
+// #define WINVER 0x0500
 #include <windows.h>
+#include "sysmets.h"
 
 // 全局变量:
 constexpr int MAX_LOADSTRING = 100;
@@ -25,8 +26,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // 使用 wcscpy_s 来复制字符串
-    wcscpy_s(szWindowClass, MAX_LOADSTRING, L"SysMets2"); // 窗口类名
-    wcscpy_s(szTitle, MAX_LOADSTRING, L"SysMets2");       // 窗口标题
+    wcscpy_s(szWindowClass, MAX_LOADSTRING, L"SysMets2");
+    wcscpy_s(szTitle, MAX_LOADSTRING, L"SysMets2");
 
     MyRegisterClass(hInstance);
     // 执行应用程序初始化:
@@ -36,108 +37,110 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     }
     MSG msg;
 
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    return (int)msg.wParam;
+     while (GetMessage (&msg, NULL, 0, 0))
+     {
+          TranslateMessage (&msg) ;
+          DispatchMessage (&msg) ;
+     }
+     return (int)msg.wParam ;
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static int cxChar, cxCaps, cyChar, cyClient, iVscrollPos;
-    HDC hdc;
-    int i, y;
-    PAINTSTRUCT ps;
-    TCHAR szBuffer[10] = {0};
-    TEXTMETRIC tm;
+     static int  cxChar, cxCaps, cyChar, cyClient, iVscrollPos ;
+     HDC         hdc ;
+     int         i, y ;
+     PAINTSTRUCT ps ;
+     TCHAR       szBuffer[10] ;
+     TEXTMETRIC  tm ;
 
-    switch (message)
-    {
-    case WM_CREATE:
-        hdc = GetDC(hwnd);
-        GetTextMetrics(hdc, &tm);
-        cxChar = tm.tmAveCharWidth;
-        cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2;
-        cyChar = tm.tmHeight + tm.tmExternalLeading;
+     switch (message)
+     {
+     case WM_CREATE:
+          hdc = GetDC (hwnd) ;
 
-        ReleaseDC(hwnd, hdc);
+          GetTextMetrics (hdc, &tm) ;
+          cxChar = tm.tmAveCharWidth ;
+          cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2 ;
+          cyChar = tm.tmHeight + tm.tmExternalLeading ;
 
-        SetScrollRange(hwnd, SB_VERT, 0, NUMLINES - 1, FALSE);
-        SetScrollPos(hwnd, SB_VERT, iVscrollPos, TRUE);
-        return 0;
+          ReleaseDC (hwnd, hdc) ;
 
-    case WM_SIZE:
-        cyClient = HIWORD(lParam);
-        return 0;
+          SetScrollRange (hwnd, SB_VERT, 0, NUMLINES - 1, FALSE) ;
+          SetScrollPos   (hwnd, SB_VERT, iVscrollPos, TRUE) ;
+          return 0 ;
 
-    case WM_VSCROLL:
-        switch (LOWORD(wParam))
-        {
-        case SB_LINEUP:
-            // MessageBox(NULL, L"This is a message.", L"Message Box", MB_OK |
-            // MB_ICONINFORMATION);
-            iVscrollPos -= 1;
-            break;
+     case WM_SIZE:
+          cyClient = HIWORD (lParam) ;
+          return 0 ;
 
-        case SB_LINEDOWN:
-            // MessageBox(NULL, L"This is a message.", L"Message Box", MB_OK |
-            // MB_ICONINFORMATION);
-            iVscrollPos += 1;
-            break;
+     case WM_VSCROLL:
+          switch (LOWORD (wParam))
+          {
+          case SB_LINEUP:
+               iVscrollPos -= 1 ;
+               break ;
+     
+          case SB_LINEDOWN:
+               iVscrollPos += 1 ;
+               break ;
+     
+          case SB_PAGEUP:
+               iVscrollPos -= cyClient / cyChar ;
+               break ;
+     
+          case SB_PAGEDOWN:
+               iVscrollPos += cyClient / cyChar ;
+               break ;
+     
+          case SB_THUMBPOSITION:
+               iVscrollPos = HIWORD (wParam) ;
+               break ;
+     
+          default :
+               break ;
+          }
 
-        case SB_PAGEUP:
-            iVscrollPos -= cyClient / cyChar;
-            break;
+          iVscrollPos = max (0, min (iVscrollPos, NUMLINES - 1)) ;
 
-        case SB_PAGEDOWN:
-            iVscrollPos += cyClient / cyChar;
-            break;
+          if (iVscrollPos != GetScrollPos (hwnd, SB_VERT))
+          {
+               SetScrollPos (hwnd, SB_VERT, iVscrollPos, TRUE) ;
+               InvalidateRect (hwnd, NULL, TRUE) ;
+          }
+          return 0 ;
 
-        case SB_THUMBPOSITION:
-            iVscrollPos = HIWORD(wParam);
-            break;
+     case WM_PAINT:
+          hdc = BeginPaint (hwnd, &ps) ;
+     
+          for (i = 0 ; i < NUMLINES ; i++)
+          {
+               y = cyChar * (i - iVscrollPos) ;
+     
+               TextOut (hdc, 0, y,
+                        sysmetrics[i].szLabel,
+                        lstrlen (sysmetrics[i].szLabel)) ;
+     
+               TextOut (hdc, 22 * cxCaps, y,
+                        sysmetrics[i].szDesc,
+                        lstrlen (sysmetrics[i].szDesc)) ;
+     
+               SetTextAlign (hdc, TA_RIGHT | TA_TOP) ;
+     
+               TextOut (hdc, 22 * cxCaps + 40 * cxChar, y, szBuffer,
+                        wsprintf (szBuffer, TEXT ("%5d"),
+                             GetSystemMetrics (sysmetrics[i].iIndex))) ;
+     
+               SetTextAlign (hdc, TA_LEFT | TA_TOP) ;
+          }
+          EndPaint (hwnd, &ps) ;
+          return 0 ;
 
-        default:
-            break;
-        }
-
-        iVscrollPos = max(0, min(iVscrollPos, NUMLINES - 1));
-
-        if (iVscrollPos != GetScrollPos(hwnd, SB_VERT))
-        {
-            SetScrollPos(hwnd, SB_VERT, iVscrollPos, TRUE);
-            InvalidateRect(hwnd, NULL, TRUE);
-        }
-        return 0;
-
-    case WM_PAINT:
-        hdc = BeginPaint(hwnd, &ps);
-
-        for (i = 0; i < NUMLINES; i++)
-        {
-            y = cyChar * (i - iVscrollPos);
-
-            TextOut(hdc, 0, y, sysmetrics[i].szLabel, lstrlen(sysmetrics[i].szLabel));
-
-            TextOut(hdc, 22 * cxCaps, y, sysmetrics[i].szDesc, lstrlen(sysmetrics[i].szDesc));
-
-            SetTextAlign(hdc, TA_RIGHT | TA_TOP);
-
-            TextOut(hdc, 22 * cxCaps + 40 * cxChar, y, szBuffer,
-                    wsprintf(szBuffer, TEXT("%5d"), GetSystemMetrics(sysmetrics[i].iIndex)));
-
-            SetTextAlign(hdc, TA_LEFT | TA_TOP);
-        }
-        EndPaint(hwnd, &ps);
-        return 0;
-
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-    }
-    return DefWindowProc(hwnd, message, wParam, lParam);
+     case WM_DESTROY:
+          PostQuitMessage (0) ;
+          return 0 ;
+     }
+     return DefWindowProc (hwnd, message, wParam, lParam) ;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
