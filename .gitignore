@@ -70,3 +70,6 @@ x64/
 #*.filters
 #*.ico
 #*.rc
+
+.editorconfig
+.clang-format
