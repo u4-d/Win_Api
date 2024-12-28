@@ -1,0 +1,99 @@
+向视窗的显示区域写入字符串
+TextOut(hdc,x,y,psText,iLength);
+hdc窗口代号?
+x,y显示的开始位置 x是水平位置，y是垂直位置
+psText指向字符串的指针
+iLength字符串的长度
+
+取得窗口代号:
+方法1
+hdc = BeginPaint (hwnd, &ps) ;  
+在此处调用填充窗口函数
+也可以什么都不做(仅仅使先前无效区域变为有效)
+EndPaint (hwnd, &ps) ; 
+
+绘图结构体(调用者只使用前3个字段,后3个留给系统使用)
+typedef struct tagPAINTSTRUCT 
+{ 
+HDC      hdc ; 
+BOOL        fErase ; 
+RECT        rcPaint ; 
+BOOL     fRestore ; 
+BOOL     fIncUpdate ; 
+BYTE     rgbReserved[32] ; 
+} PAINTSTRUCT ; 
+
+WM_ERASEBKGND 擦除信息
+
+使整个显示区域变为无效，并擦除背景
+InvalidateRect (hwnd, NULL, TRUE) ;
+不擦除背景
+InvalidateRect (hwnd, NULL, FALSE) ;
+
+方法2
+hdc = GetDC (hwnd) ; 
+在此处调用填充窗口函数
+ReleaseDC (hwnd, hdc) ;
+
+typedef struct tagTEXTMETRIC {
+  LONG    tmHeight;         // 字形的高度
+  LONG    tmAscent;         // 字形的升高（字体的上部分）
+  LONG    tmDescent;        // 字形的降幅（字体的下部分）
+  LONG    tmInternalLeading; // 字符内部的行间距
+  LONG    tmExternalLeading; // 外部行间距
+  LONG    tmWeight;         // 字体的粗细
+  LONG    tmOverhang;       // 字符的突出部分
+  LONG    tmDigitizedAspectX; // 数字化字体的宽度比例
+  LONG    tmDigitizedAspectY; // 数字化字体的高度比例
+  BYTE    tmFirstChar;      // 第一个字符的 ASCII 值
+  BYTE    tmLastChar;       // 最后一个字符的 ASCII 值
+  BYTE    tmDefaultChar;    // 默认字符的 ASCII 值
+  BYTE    tmBreakChar;      // 换行符字符的 ASCII 值
+  WORD    tmItalic;         // 字体是否为斜体
+  WORD    tmUnderlined;     // 字体是否有下划线
+  WORD    tmStruckOut;      // 字体是否有删除线
+  WORD    tmPitchAndFamily; // 字体的音调和家族信息
+  BYTE    tmCharSet;        // 字符集
+} TEXTMETRIC;
+
+GetTextMetrics函数
+BOOL GetTextMetrics(
+  HDC         hdc,
+  LPTEXTMETRIC lptm
+);
+参数
+hdc：设备上下文的句柄，表示一个绘图环境，通常是在调用绘制函数（如 BeginPaint 或 CreateCompatibleDC）时获得的。
+lptm：指向 TEXTMETRIC 结构的指针，函数将把获取到的字体信息存储到这个结构中。
+用于获取有关字体的度量信息。
+该函数可以帮助开发者获取有关某种字体的高度、宽度和其他相关的文本属性，
+这对于文本布局、绘制和排版等任务非常有用。
+
+
+
+GetSystemMetrics 函数，它用于检索有关系统的各种信息和设置，
+包括屏幕的分辨率、窗口的最大大小、任务栏的大小等等。
+
+参数
+nIndex：指定要检索的系统度量项的索引值。这个参数是一个整数，
+代表不同的系统信息项。每个不同的索引值对应不同的系统度量。
+常见的索引值可以是与屏幕分辨率、任务栏、窗口大小等相关的常量。
+
+常用的 nIndex 值
+SM_CXSCREEN (0)：屏幕的宽度，以像素为单位。
+SM_CYSCREEN (1)：屏幕的高度，以像素为单位。
+SM_CXVSCROLL (2)：垂直滚动条的宽度。
+SM_CYHSCROLL (3)：水平滚动条的高度。
+SM_CYCAPTION (4)：标题栏的高度。
+SM_CXEDGE (45)：边框宽度。
+SM_CYEDGE (46)：边框高度。
+SM_CXICON (11)：图标的宽度。
+SM_CYICON (12)：图标的高度。
+SM_CYMINTRACK (34)：窗口的最小高度。
+SM_CXMINTRACK (33)：窗口的最小宽度。
+SM_CYFULLSCREEN (16)：全屏模式下的屏幕高度。
+SM_CXFULLSCREEN (15)：全屏模式下的屏幕宽度。
+
+其他用途
+窗口布局调整：通过获取屏幕大小和其他布局信息，开发者可以在程序启动时自动调整窗口的大小。
+任务栏和滚动条处理：有时需要知道任务栏的大小或滚动条的大小，以便避免窗口和内容被遮挡或与屏幕边缘重叠。
+
