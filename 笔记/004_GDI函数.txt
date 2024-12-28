@@ -97,3 +97,28 @@ SM_CXFULLSCREEN (15)：全屏模式下的屏幕宽度。
 窗口布局调整：通过获取屏幕大小和其他布局信息，开发者可以在程序启动时自动调整窗口的大小。
 任务栏和滚动条处理：有时需要知道任务栏的大小或滚动条的大小，以便避免窗口和内容被遮挡或与屏幕边缘重叠。
 
+GetClientRect函数
+BOOL GetClientRect(
+  HWND   hWnd,    // 窗口的句柄
+  LPRECT lpRect   // 指向 RECT 结构体的指针，用于接收客户区的坐标信息
+);
+参数说明：
+hWnd：窗口的句柄（HWND）。这是你想获取客户区域的窗口的标识符。
+lpRect：指向 RECT 结构体的指针。RECT 结构体用于存储客户区域的左上角和右下角的坐标。
+RECT 结构体：
+RECT 结构体用于存储一个矩形的坐标，定义如下：
+
+cpp
+复制代码
+typedef struct tagRECT {
+    LONG left;    // 矩形左边的x坐标
+    LONG top;     // 矩形上边的y坐标
+    LONG right;   // 矩形右边的x坐标
+    LONG bottom;  // 矩形下边的y坐标
+} RECT;
+left 和 top 分别表示矩形左上角的 x 和 y 坐标。
+right 和 bottom 分别表示矩形右下角的 x 和 y 坐标。
+返回值：
+如果函数成功，返回值为 非零。
+如果函数失败，返回值为 零。可以通过调用 GetLastError 来获取详细的错误信息。
+
