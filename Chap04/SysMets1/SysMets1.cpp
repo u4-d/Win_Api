@@ -7,11 +7,11 @@ constexpr int WINVER = 0x0500;
 #include "sysmets.h"
 #include <windows.h>
 
-// È«¾Ö±äÁ¿:
+// å…¨å±€å˜é‡:
 constexpr int MAX_LOADSTRING = 100;
-HINSTANCE hInst;                     // µ±Ç°ÊµÀı
-WCHAR szTitle[MAX_LOADSTRING];       // ±êÌâÀ¸ÎÄ±¾
-WCHAR szWindowClass[MAX_LOADSTRING]; // Ö÷´°¿ÚÀàÃû
+HINSTANCE hInst;                     // å½“å‰å®ä¾‹
+WCHAR szTitle[MAX_LOADSTRING];       // æ ‡é¢˜æ æ–‡æœ¬
+WCHAR szWindowClass[MAX_LOADSTRING]; // ä¸»çª—å£ç±»å
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -21,16 +21,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
                       _In_ int nCmdShow)
 {
     static TCHAR szAppName[] = TEXT("SysMets1");
-    // ±ÜÃâÌáÊ¾Î´Ê¹ÓÃ±äÁ¿
+    // é¿å…æç¤ºæœªä½¿ç”¨å˜é‡
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // Ê¹ÓÃ wcscpy_s À´¸´ÖÆ×Ö·û´®
+    // ä½¿ç”¨ wcscpy_s æ¥å¤åˆ¶å­—ç¬¦ä¸²
     wcscpy_s(szWindowClass, MAX_LOADSTRING, L"SysMets1");
     wcscpy_s(szTitle, MAX_LOADSTRING, L"SysMets1");
 
     MyRegisterClass(hInstance);
-    // Ö´ĞĞÓ¦ÓÃ³ÌĞò³õÊ¼»¯:
+    // æ‰§è¡Œåº”ç”¨ç¨‹åºåˆå§‹åŒ–:
     if (!InitInstance(hInstance, nCmdShow))
     {
         return FALSE;
@@ -95,8 +95,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEXW wcex = {0};            // ³õÊ¼»¯ÎªÁã£¬Çå¿ÕËùÓĞ³ÉÔ±
-    wcex.cbSize = sizeof(WNDCLASSEXW); // ÉèÖÃ½á¹¹ÌåµÄ´óĞ¡
+    WNDCLASSEXW wcex = {0};            // åˆå§‹åŒ–ä¸ºé›¶ï¼Œæ¸…ç©ºæ‰€æœ‰æˆå‘˜
+    wcex.cbSize = sizeof(WNDCLASSEXW); // è®¾ç½®ç»“æ„ä½“çš„å¤§å°
 
     wcex.style = CS_HREDRAW | CS_VREDRAW;
     wcex.lpfnWndProc = WndProc;
@@ -106,17 +106,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcex.lpszMenuName = NULL;
-    // lpszClassName Î´ÉèÖÃ»á×¢²áÊ§°Ü
+    // lpszClassName æœªè®¾ç½®ä¼šæ³¨å†Œå¤±è´¥
     wcex.lpszClassName = szWindowClass;
-    wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);   // ¼ÓÔØ´óÍ¼±ê IDI_APPLICATION
-    wcex.hIconSm = LoadIcon(hInstance, IDI_INFORMATION); // ¼ÓÔØĞ¡Í¼±ê IDI_INFORMATION
+    wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);   // åŠ è½½å¤§å›¾æ ‡ IDI_APPLICATION
+    wcex.hIconSm = LoadIcon(hInstance, IDI_INFORMATION); // åŠ è½½å°å›¾æ ‡ IDI_INFORMATION
 
     return RegisterClassExW(&wcex);
 }
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-    hInst = hInstance; // ½«ÊµÀı¾ä±ú´æ´¢ÔÚÈ«¾Ö±äÁ¿ÖĞ
+    hInst = hInstance; // å°†å®ä¾‹å¥æŸ„å­˜å‚¨åœ¨å…¨å±€å˜é‡ä¸­
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr,
                               nullptr, hInstance, nullptr);

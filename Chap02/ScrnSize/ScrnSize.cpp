@@ -8,7 +8,7 @@
 #include <stdio.h>     
 
 int CDECL MessageBoxPrintf (const TCHAR * szCaption, const TCHAR * szFormat, ...)
-{//Ìí¼Ó const¹Ø¼ü×Ö const TCHAR * szCaption,²»È»»á±¨´í
+{//æ·»åŠ  constå…³é”®å­— const TCHAR * szCaption,ä¸ç„¶ä¼šæŠ¥é”™
      TCHAR   szBuffer [1024] ;
      va_list pArgList ;
 
@@ -39,7 +39,7 @@ int WINAPI wWinMain (_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
      cyScreen = GetSystemMetrics (SM_CYSCREEN) ;
 
      MessageBoxPrintf (
-         TEXT ("ScrnSize"),TEXT ("The screen is %i pixels ¿íwide by %i pixels ¸ßhigh."),
+         TEXT ("ScrnSize"),TEXT ("The screen is %i pixels å®½wide by %i pixels é«˜high."),
          cxScreen, cyScreen) ;
      return 0 ;
 }
