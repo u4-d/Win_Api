@@ -149,13 +149,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // TODO: 在此处添加使用 hdc 的任何绘图代码...
         GetClientRect(hWnd, &rect);
 
-        // DrawText(hdc, TEXT("Hello, 中文Windows 98!"), -1, &rect,
-        // DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+        DrawText(hdc, TEXT("Hello, 中文Windows 98!"), -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
         //  将消息编号转换为字符串
         _stprintf_s(szMessage, _T("Captured Message: %u"), message);
 
         // 在窗口上绘制消息
-        DrawText(hdc, szMessage, -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+        //DrawText(hdc, szMessage, -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
         EndPaint(hWnd, &ps);
     }
     break;

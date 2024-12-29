@@ -336,10 +336,11 @@ VOID my_wm_paint(_In_ HWND hWnd, _In_ my_create crt) {
 
   int iPaintBeg = max(0, iVertPos + ps.rcPaint.top / crt.cyChar);
   int iPaintEnd = min(NUMLINES - 1, iVertPos + ps.rcPaint.bottom / crt.cyChar);
-
+  int x=0;
+  int y=0;
   for (int i = iPaintBeg; i <= iPaintEnd; i++) {
-    int x = crt.cxChar * (1 - iHorzPos);
-    int y = crt.cyChar * (i - iVertPos);
+    x = crt.cxChar * (1 - iHorzPos);
+    y = crt.cyChar * (i - iVertPos);
 
     TextOut(hdc, x, y, sysmetrics[i].szLabel, lstrlen(sysmetrics[i].szLabel));
 
@@ -354,6 +355,6 @@ VOID my_wm_paint(_In_ HWND hWnd, _In_ my_create crt) {
 
     SetTextAlign(hdc, TA_LEFT | TA_TOP);
   }
-
+  
   EndPaint(hWnd, &ps);
 }

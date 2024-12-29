@@ -26,8 +26,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   UNREFERENCED_PARAMETER(lpCmdLine);
 
   // 使用 wcscpy_s 来复制字符串
-  wcscpy_s(szWindowClass, MAX_LOADSTRING, L"SysMets2");
-  wcscpy_s(szTitle, MAX_LOADSTRING, L"SysMets2");
+  wcscpy_s(szWindowClass, MAX_LOADSTRING, L"SysMets3");
+  wcscpy_s(szTitle, MAX_LOADSTRING, L"SysMets3");
 
   MyRegisterClass(hInstance);
   // 执行应用程序初始化:
@@ -242,7 +242,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
 
         SetTextAlign(hdc, TA_LEFT | TA_TOP);
       }
-
+      TextOut(hdc, x, y, L"中文", lstrlen(L"中文"));
       EndPaint(hwnd, &ps);
       return 0;
 
