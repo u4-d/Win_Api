@@ -6,7 +6,6 @@
 constexpr int WINVER = 0x0500;
 // #define WINVER 0x0500
 #include <windows.h>
-
 #include "sysmets.h"
 
 // 全局变量:

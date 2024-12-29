@@ -58,8 +58,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
       hdc = GetDC(hwnd);
 
       GetTextMetrics(hdc, &tm);
+      //字符的平均宽度。
       cxChar = tm.tmAveCharWidth;
+      //tm.tmPitchAndFamily 的最低位是 1 则 cxCaps 的值为 (3 * cxChar) / 2
+      //tm.tmPitchAndFamily 的最低位是 0 则 cxCaps 的值为 (2 * cxChar) / 2
       cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2;
+      //tmHeight：字体的总高度。包括字符的上升部分和下降部分。
+      //tmExternalLeading：字体外部行距，即文本行之间的间距。
       cyChar = tm.tmHeight + tm.tmExternalLeading;
 
       ReleaseDC(hwnd, hdc);

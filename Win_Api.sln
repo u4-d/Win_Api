@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "笔记", "笔记", "{855BD9
 	ProjectSection(SolutionItems) = preProject
 		001_新winmain函数.txt = 001_新winmain函数.txt
 		002_变量首字符与类型对应表.txt = 002_变量首字符与类型对应表.txt
+		q.txt = q.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chap04", "Chap04", "{E50533D8-B6CF-4D41-B378-E12D94AABD09}"
@@ -37,6 +38,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SysMets2", "Chap04\SysMets2\SysMets2.vcxproj", "{916C4EA5-DE1A-4809-9359-66F14F2F6424}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SysMets3", "Chap04\SysMets3\SysMets3.vcxproj", "{27CDDEA2-24B7-4478-8A6D-5296773C36B8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "my_sysMets", "Chap04\my_sysMets\my_sysMets.vcxproj", "{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +105,14 @@ Global
 		{27CDDEA2-24B7-4478-8A6D-5296773C36B8}.Release|x64.Build.0 = Release|x64
 		{27CDDEA2-24B7-4478-8A6D-5296773C36B8}.Release|x86.ActiveCfg = Release|Win32
 		{27CDDEA2-24B7-4478-8A6D-5296773C36B8}.Release|x86.Build.0 = Release|Win32
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}.Debug|x64.ActiveCfg = Debug|x64
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}.Debug|x64.Build.0 = Debug|x64
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}.Debug|x86.ActiveCfg = Debug|Win32
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}.Debug|x86.Build.0 = Debug|Win32
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}.Release|x64.ActiveCfg = Release|x64
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}.Release|x64.Build.0 = Release|x64
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}.Release|x86.ActiveCfg = Release|Win32
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,5 +125,6 @@ Global
 		{34BCFE02-B183-480A-B1AB-18744B47F2D4} = {E50533D8-B6CF-4D41-B378-E12D94AABD09}
 		{916C4EA5-DE1A-4809-9359-66F14F2F6424} = {E50533D8-B6CF-4D41-B378-E12D94AABD09}
 		{27CDDEA2-24B7-4478-8A6D-5296773C36B8} = {E50533D8-B6CF-4D41-B378-E12D94AABD09}
+		{8E8B24ED-5A04-4623-ADF2-4002C9BF239E} = {E50533D8-B6CF-4D41-B378-E12D94AABD09}
 	EndGlobalSection
 EndGlobal
