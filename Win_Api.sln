@@ -23,6 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "笔记", "笔记", "{855BD9
 	ProjectSection(SolutionItems) = preProject
 		001_新winmain函数.txt = 001_新winmain函数.txt
 		002_变量首字符与类型对应表.txt = 002_变量首字符与类型对应表.txt
+		笔记\004_GDI函数.txt = 笔记\004_GDI函数.txt
+		笔记\999_Windows_API分类.txt = 笔记\999_Windows_API分类.txt
+		git_cmd.txt = git_cmd.txt
 		q.txt = q.txt
 	EndProjectSection
 EndProject
