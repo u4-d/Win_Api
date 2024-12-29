@@ -89,9 +89,9 @@ struct {
 
 struct my_create
 {
-    int cxChar;//×Ö·ûµÄÆ½¾ù¿í¶È¡£
+    int cxChar;//å­—ç¬¦çš„å¹³å‡å®½åº¦ã€‚
     int cxCaps;
-    int cyChar;//×ÖÌå¸ß¶È+ĞĞ¾à
-    int iMaxWidth;//×Ü¿í¶È?
+    int cyChar;//å­—ä½“é«˜åº¦+è¡Œè·
+    int iMaxWidth;//æ€»å®½åº¦?
 };
 
