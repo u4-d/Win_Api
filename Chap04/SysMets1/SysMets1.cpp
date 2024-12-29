@@ -2,16 +2,17 @@
    SYSMETS1.C -- System Metrics Display Program No. 1
                  (c) Charles Petzold, 1998
   ----------------------------------------------------*/
+
 constexpr int WINVER = 0x0500;
 // #define WINVER 0x0500
-#include "sysmets.h"
 #include <windows.h>
+#include "sysmets.h"
 
-// ÂÖ®Â±ÄÂèòÈáè:
+// »´æ÷±‰¡ø:
 constexpr int MAX_LOADSTRING = 100;
-HINSTANCE hInst;                     // ÂΩìÂâçÂÆû‰æã
-WCHAR szTitle[MAX_LOADSTRING];       // Ê†áÈ¢òÊ†èÊñáÊú¨
-WCHAR szWindowClass[MAX_LOADSTRING]; // ‰∏ªÁ™óÂè£Á±ªÂêç
+HINSTANCE hInst;                     // µ±«∞ µ¿˝
+WCHAR szTitle[MAX_LOADSTRING];       // ±ÍÃ‚¿∏Œƒ±æ
+WCHAR szWindowClass[MAX_LOADSTRING]; // ÷˜¥∞ø⁄¿‡√˚
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -20,83 +21,87 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,
                       _In_ int nCmdShow)
 {
-    static TCHAR szAppName[] = TEXT("SysMets1");
-    // ÈÅøÂÖçÊèêÁ§∫Êú™‰ΩøÁî®ÂèòÈáè
+    // ±‹√‚Ã· æŒ¥ π”√±‰¡ø
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // ‰ΩøÁî® wcscpy_s Êù•Â§çÂà∂Â≠óÁ¨¶‰∏≤
+    //  π”√ wcscpy_s ¿¥∏¥÷∆◊÷∑˚¥Æ
     wcscpy_s(szWindowClass, MAX_LOADSTRING, L"SysMets1");
     wcscpy_s(szTitle, MAX_LOADSTRING, L"SysMets1");
 
     MyRegisterClass(hInstance);
-    // ÊâßË°åÂ∫îÁî®Á®ãÂ∫èÂàùÂßãÂåñ:
+    // ÷¥––”¶”√≥Ã–Ú≥ı ºªØ:
     if (!InitInstance(hInstance, nCmdShow))
     {
         return FALSE;
     }
     MSG msg;
 
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    return (int)msg.wParam;
+     while (GetMessage (&msg, NULL, 0, 0))
+     {
+          TranslateMessage (&msg) ;
+          DispatchMessage (&msg) ;
+     }
+     return (int)msg.wParam ;
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static int cxChar, cxCaps, cyChar;
-    HDC hdc;
-    int i;
-    PAINTSTRUCT ps;
-    TCHAR szBuffer[10] = {0};
-    TEXTMETRIC tm;
+     static int  cxChar, cxCaps, cyChar ;
+     HDC         hdc ;
+     int         i ;
+     PAINTSTRUCT ps ;
+     TCHAR       szBuffer [10] ;
+     TEXTMETRIC  tm ;
 
-    switch (message)
-    {
-    case WM_CREATE:
-        hdc = GetDC(hwnd);
+     switch (message)
+     {
+     case WM_CREATE:
+          hdc = GetDC (hwnd) ;
 
-        GetTextMetrics(hdc, &tm);
-        cxChar = tm.tmAveCharWidth;
-        cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2;
-        cyChar = tm.tmHeight + tm.tmExternalLeading;
+          GetTextMetrics (hdc, &tm) ;
+          cxChar = tm.tmAveCharWidth ;
+          cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2 ;
+          cyChar = tm.tmHeight + tm.tmExternalLeading ;
 
-        ReleaseDC(hwnd, hdc);
-        return 0;
+          ReleaseDC (hwnd, hdc) ;
+          return 0 ;
 
-    case WM_PAINT:
-        hdc = BeginPaint(hwnd, &ps);
+     case WM_PAINT :
+          hdc = BeginPaint (hwnd, &ps) ;
 
-        for (i = 0; i < NUMLINES; i++)
-        {
-            TextOut(hdc, 0, cyChar * i, sysmetrics[i].szLabel, lstrlen(sysmetrics[i].szLabel));
+          for (i = 0 ; i < NUMLINES ; i++)
+          {
+               TextOut (hdc, 0, cyChar * i,                      
+                        sysmetrics[i].szLabel,
+                        lstrlen (sysmetrics[i].szLabel)) ;
 
-            TextOut(hdc, 22 * cxCaps, cyChar * i, sysmetrics[i].szDesc, lstrlen(sysmetrics[i].szDesc));
+               TextOut (hdc, 22 * cxCaps, cyChar * i,      
+                        sysmetrics[i].szDesc,
+                        lstrlen (sysmetrics[i].szDesc)) ;
 
-            SetTextAlign(hdc, TA_RIGHT | TA_TOP);
+               SetTextAlign (hdc, TA_RIGHT | TA_TOP) ;
 
-            TextOut(hdc, 22 * cxCaps + 40 * cxChar, cyChar * i, szBuffer,
-                    wsprintf(szBuffer, TEXT("%5d"), GetSystemMetrics(sysmetrics[i].iIndex)));
+               TextOut (hdc, 22 * cxCaps + 40 * cxChar, cyChar * i, szBuffer,
+                        wsprintf (szBuffer, TEXT ("%5d"),
+                             GetSystemMetrics (sysmetrics[i].iIndex))) ;
 
-            SetTextAlign(hdc, TA_LEFT | TA_TOP);
-        }
-        EndPaint(hwnd, &ps);
-        return 0;
+               SetTextAlign (hdc, TA_LEFT | TA_TOP) ;
+          }
+          EndPaint (hwnd, &ps) ;
+          return 0 ;
 
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-    }
-    return DefWindowProc(hwnd, message, wParam, lParam);
+     case WM_DESTROY :
+          PostQuitMessage (0) ;
+          return 0 ;
+     }
+     return DefWindowProc (hwnd, message, wParam, lParam) ;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEXW wcex = {0};            // ÂàùÂßãÂåñ‰∏∫Èõ∂ÔºåÊ∏ÖÁ©∫ÊâÄÊúâÊàêÂëò
-    wcex.cbSize = sizeof(WNDCLASSEXW); // ËÆæÁΩÆÁªìÊûÑ‰ΩìÁöÑÂ§ßÂ∞è
+    WNDCLASSEXW wcex = {0};            // ≥ı ºªØŒ™¡„£¨«Âø’À˘”–≥…‘±
+    wcex.cbSize = sizeof(WNDCLASSEXW); // …Ë÷√Ω·ππÃÂµƒ¥Û–°
 
     wcex.style = CS_HREDRAW | CS_VREDRAW;
     wcex.lpfnWndProc = WndProc;
@@ -106,17 +111,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcex.lpszMenuName = NULL;
-    // lpszClassName Êú™ËÆæÁΩÆ‰ºöÊ≥®ÂÜåÂ§±Ë¥•
+    // lpszClassName Œ¥…Ë÷√ª·◊¢≤· ß∞‹
     wcex.lpszClassName = szWindowClass;
-    wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);   // Âä†ËΩΩÂ§ßÂõæÊ†á IDI_APPLICATION
-    wcex.hIconSm = LoadIcon(hInstance, IDI_INFORMATION); // Âä†ËΩΩÂ∞èÂõæÊ†á IDI_INFORMATION
+    wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);   // º”‘ÿ¥ÛÕº±Í IDI_APPLICATION
+    wcex.hIconSm = LoadIcon(hInstance, IDI_INFORMATION); // º”‘ÿ–°Õº±Í IDI_INFORMATION
 
     return RegisterClassExW(&wcex);
 }
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-    hInst = hInstance; // Â∞ÜÂÆû‰æãÂè•ÊüÑÂ≠òÂÇ®Âú®ÂÖ®Â±ÄÂèòÈáè‰∏≠
+    hInst = hInstance; // Ω´ µ¿˝æ‰±˙¥Ê¥¢‘⁄»´æ÷±‰¡ø÷–
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr,
                               nullptr, hInstance, nullptr);

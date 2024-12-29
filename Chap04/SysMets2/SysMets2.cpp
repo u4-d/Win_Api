@@ -51,7 +51,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
      HDC         hdc ;
      int         i, y ;
      PAINTSTRUCT ps ;
-     TCHAR       szBuffer[10] ;
+     TCHAR       szBuffer[10]={0} ;
      TEXTMETRIC  tm ;
 
      switch (message)
