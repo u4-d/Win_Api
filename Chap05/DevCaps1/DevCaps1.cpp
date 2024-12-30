@@ -2,7 +2,7 @@
    DEVCAPS1.C -- Device Capabilities Display Program No. 1
                  (c) Charles Petzold, 1998
   ---------------------------------------------------------*/
-//#define UNICODE
+//ÖÐÎÄ±¸×¢
 #include <windows.h>
 
 #define NUMLINES ((int)(sizeof devcaps / sizeof devcaps[0]))
