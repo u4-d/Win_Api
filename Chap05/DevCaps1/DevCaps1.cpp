@@ -36,12 +36,13 @@ struct {
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HFONT CreateCustomFont(int fontSize);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
-                   int iCmdShow) {
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+                      _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,
+                      _In_ int nCmdShow) {
     static TCHAR szAppName[] = TEXT("DevCaps1");
     HWND hwnd;
     MSG msg;
-    WNDCLASS wndclass;
+    WNDCLASS wndclass={0};
 
     wndclass.style = CS_HREDRAW | CS_VREDRAW;
     wndclass.lpfnWndProc = WndProc;
@@ -65,7 +66,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
                      WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
                      CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
 
-    ShowWindow(hwnd, iCmdShow);
+    ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
     while (GetMessage(&msg, NULL, 0, 0)) {
@@ -78,9 +79,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
                          LPARAM lParam) {
     static int cxChar, cxCaps, cyChar;
-    TCHAR szBuffer[10];
+    TCHAR szBuffer[10]={10};
     HDC hdc;
-    int i;
+    int i=0;
     PAINTSTRUCT ps;
     TEXTMETRIC tm;
     HFONT hFont;  // 用于字体
@@ -129,7 +130,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
 
                 SetTextAlign(hdc, TA_LEFT | TA_TOP);
             }
-
+            TextOut(hdc, 0, cyChar *i, L"中文", lstrlen(L"中文"));
             EndPaint(hwnd, &ps);
             return 0;
 
@@ -150,7 +151,7 @@ HFONT CreateCustomFont(int fontSize) {
     // 设置字体大小
     lf.lfHeight = fontSize;   // 根据传入的参数设置字体大小
     lf.lfWeight = FW_NORMAL;  // 设置字体粗细
-    lstrcpy(lf.lfFaceName, TEXT("Arial"));  // 使用系统默认字体Arial
+    lstrcpy(lf.lfFaceName, TEXT("simsun"));  // Arial使用系统默认字体Arial
 
     // 创建字体并返回句柄
     return CreateFontIndirect(&lf);
