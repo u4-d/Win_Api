@@ -34,6 +34,7 @@ struct {
     COLORRES,    TEXT("COLORRES"),    TEXT("Actual color resolution:")};
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+HFONT CreateCustomFont(int fontSize);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
                    int iCmdShow) {
@@ -71,7 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    return msg.wParam;
+    return (int)msg.wParam;
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
@@ -82,32 +83,47 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
     int i;
     PAINTSTRUCT ps;
     TEXTMETRIC tm;
+    HFONT hFont;  // 用于字体
+    const int LEFT=20;
+    const int RIGHT=40;
 
     switch (message) {
         case WM_CREATE:
             hdc = GetDC(hwnd);
-
+            // 创建一个字体大小为16的字体
+            hFont = CreateCustomFont(22);  // 调用函数设置字体大小为16
+            // 选择并应用字体
+            SelectObject(hdc, hFont);
+            // 获取文本度量信息
             GetTextMetrics(hdc, &tm);
             cxChar = tm.tmAveCharWidth;
             cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2;
             cyChar = tm.tmHeight + tm.tmExternalLeading;
 
             ReleaseDC(hwnd, hdc);
+            // 保存字体句柄
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)hFont);
+
             return 0;
 
         case WM_PAINT:
             hdc = BeginPaint(hwnd, &ps);
+            // 获取自定义字体句柄
+            hFont = (HFONT)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
+            // 选择字体
+            SelectObject(hdc, hFont);
 
             for (i = 0; i < NUMLINES; i++) {
                 TextOut(hdc, 0, cyChar * i, devcaps[i].szLabel,
                         lstrlen(devcaps[i].szLabel));
 
-                TextOut(hdc, 14 * cxCaps, cyChar * i, devcaps[i].szDesc,
+                TextOut(hdc, LEFT * cxCaps, cyChar * i, devcaps[i].szDesc,
                         lstrlen(devcaps[i].szDesc));
 
                 SetTextAlign(hdc, TA_RIGHT | TA_TOP);
 
-                TextOut(hdc, 14 * cxCaps + 35 * cxChar, cyChar * i, szBuffer,
+                TextOut(hdc, LEFT * cxCaps + RIGHT * cxChar, cyChar * i, szBuffer,
                         wsprintf(szBuffer, TEXT("%5d"),
                                  GetDeviceCaps(hdc, devcaps[i].iIndex)));
 
@@ -118,8 +134,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
             return 0;
 
         case WM_DESTROY:
+            // 删除字体
+            hFont = (HFONT)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+            DeleteObject(hFont);  // 释放字体资源
             PostQuitMessage(0);
             return 0;
     }
     return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
+// 设置字体大小的函数
+HFONT CreateCustomFont(int fontSize) {
+    LOGFONT lf = {0};  // 设置字体信息
+
+    // 设置字体大小
+    lf.lfHeight = fontSize;   // 根据传入的参数设置字体大小
+    lf.lfWeight = FW_NORMAL;  // 设置字体粗细
+    lstrcpy(lf.lfFaceName, TEXT("Arial"));  // 使用系统默认字体Arial
+
+    // 创建字体并返回句柄
+    return CreateFontIndirect(&lf);
 }
