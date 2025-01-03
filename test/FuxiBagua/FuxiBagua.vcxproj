@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9301118c-bfc0-443c-8216-3149b5a3a268}</ProjectGuid>
-    <RootNamespace>Bagua</RootNamespace>
+    <ProjectGuid>{3def3c50-6083-421f-97cd-2f255300a434}</ProjectGuid>
+    <RootNamespace>FuxiBagua</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,10 +127,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="bagua.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="FuxiBagua.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="FuxiBagua.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FuxiBagua.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="FuxiBagua.ico" />
+    <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

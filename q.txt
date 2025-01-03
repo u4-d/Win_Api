@@ -1,10 +1,9 @@
-SM_CXSCREEN, TEXT("SM_CXSCREEN"), TEXT("Screen width in pixels"), SM_CYSCREEN,
-    TEXT("SM_CYSCREEN"), TEXT("Screen height in pixels"), SM_CXVSCROLL,
-    TEXT("SM_CXVSCROLL"), TEXT("Vertical scroll width"), SM_CYHSCROLL,
-    TEXT("SM_CYHSCROLL"), TEXT("Horizontal scroll height"), SM_CYCAPTION,
-    TEXT("SM_CYCAPTION"), TEXT("Caption bar height"), SM_CXBORDER,
-    TEXT("SM_CXBORDER"), TEXT("Window border width"),
-    SM_CYBORDER, 使用python写一个脚本,把文件中上面的改写成结构体,
-    要求想下面的格式{SM_CXSCREEN, TEXT("SM_CXSCREEN"),
-                     TEXT("Screen width in pixels")},
-    {SM_CYSCREEN, TEXT("SM_CYSCREEN"), TEXT("Screen height in pixels")},
+// 右下
+    MoveToEx(hdc, centerX + diagonalDistance - halfLength,
+             centerY + diagonalDistance + halfLength, nullptr);
+    LineTo(hdc, centerX + diagonalDistance + halfLength,
+           centerY + diagonalDistance - halfLength);
+
+// 左下
+    MoveToEx(hdc, centerX - diagonalDistance - halfLength, centerY + diagonalDistance - halfLength, nullptr);
+    LineTo(hdc, centerX - diagonalDistance + halfLength, centerY + diagonalDistance + halfLength);
