@@ -1,61 +1,74 @@
 
 #include <windows.h>
 #include <wincrypt.h>
-#include <bitset>  // ÓÃÓÚ·½±ãµÄ¶ş½øÖÆ´òÓ¡
+#include <bitset>  // ç”¨äºæ–¹ä¾¿çš„äºŒè¿›åˆ¶æ‰“å°
 #include <iostream>
 
-// Ê¹ÓÃ CryptGenRandom Éú³É 0 »ò 1 µÄËæ»úÊı
+// å®šä¹‰æ¯ä¸ª Unicode å­—ç¬¦çš„å¸¸é‡
+const wchar_t SYMBOLS[] = {
+    L'\u2630',  // â˜°
+    L'\u2631',  // â˜±
+    L'\u2632',  // â˜²
+    L'\u2633',  // â˜³
+    L'\u2634',  // â˜´
+    L'\u2635',  // â˜µ
+    L'\u2636',  // â˜¶
+    L'\u2637'   // â˜·
+};
+
+// ä½¿ç”¨ CryptGenRandom ç”Ÿæˆ 0 æˆ– 1 çš„éšæœºæ•°
 int generateRandomBit() {
-    // ÉêÇëÒ»¸öËæ»úÊıÉú³É¾ä±ú
+    // ç”³è¯·ä¸€ä¸ªéšæœºæ•°ç”Ÿæˆå¥æŸ„
     HCRYPTPROV hCryptProv;
     if (!CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL,
                              CRYPT_VERIFYCONTEXT)) {
         std::cerr << "CryptAcquireContext failed." << std::endl;
-        return -1;  // ´íÎó
+        return -1;  // é”™è¯¯
     }
 
-    // Éú³ÉÒ»¸öËæ»ú×Ö½Ú
-    BYTE randomByte;
+    // ç”Ÿæˆä¸€ä¸ªéšæœºå­—èŠ‚
+    BYTE randomByte=0;
     if (!CryptGenRandom(hCryptProv, sizeof(randomByte), &randomByte)) {
         std::cerr << "CryptGenRandom failed." << std::endl;
         CryptReleaseContext(hCryptProv, 0);
-        return -1;  // ´íÎó
+        return -1;  // é”™è¯¯
     }
 
-    // ÊÍ·Å¼ÓÃÜÉÏÏÂÎÄ
+    // é‡Šæ”¾åŠ å¯†ä¸Šä¸‹æ–‡
     CryptReleaseContext(hCryptProv, 0);
 
-    // ½«Ëæ»ú×Ö½Ú×ª»»Îª 0 »ò 1
-    return randomByte % 2;
+    // å°†éšæœºå­—èŠ‚è½¬æ¢ä¸º 0 æˆ– 1
+    return randomByte % 8;//2
 }
 
-// ·µ»ØÒ»¸ö×Ö½ÚÀàĞÍ£¬×îµÍµÄ 3 Î»ÓÉ generateRandomBit ÉèÖÃ
+// è¿”å›ä¸€ä¸ªå­—èŠ‚ç±»å‹ï¼Œæœ€ä½çš„ 3 ä½ç”± generateRandomBit è®¾ç½®
 unsigned char generateByteWithRandomBits() {
-    unsigned char result = 0;  // ³õÊ¼»¯Îª 0
+    unsigned char result = 0;  // åˆå§‹åŒ–ä¸º 0
 
-    // »ñÈ¡²¢ÉèÖÃ×îµÍµÄ 3 Î»
+    // è·å–å¹¶è®¾ç½®æœ€ä½çš„ 3 ä½
     for (int i = 0; i < 3; ++i) {
-        int bit = generateRandomBit();  // Éú³É 0 »ò 1
-        result |= (bit << i);  // ½«Éú³ÉµÄ bit ·ÅÖÃÔÚ×Ö½ÚµÄ¶ÔÓ¦Î»ÖÃ
+        int bit = generateRandomBit();  // ç”Ÿæˆ 0 æˆ– 1
+        result |= (bit << i);  // å°†ç”Ÿæˆçš„ bit æ”¾ç½®åœ¨å­—èŠ‚çš„å¯¹åº”ä½ç½®
     }
 
     return result;
 }
 
-// ´òÓ¡×Ö½ÚµÄ¶ş½øÖÆ±íÊ¾
+// æ‰“å°å­—èŠ‚çš„äºŒè¿›åˆ¶è¡¨ç¤º
 void printBinary(unsigned char byte) {
-    std::bitset<8> binary(byte);  // ½«×Ö½Ú×ª»»Îª 8 Î»¶ş½øÖÆ
+    std::bitset<8> binary(byte);  // å°†å­—èŠ‚è½¬æ¢ä¸º 8 ä½äºŒè¿›åˆ¶
     std::cout << binary << std::endl;
 }
 
 int main() {
-    // ²âÊÔÉú³É 10 ¸öËæ»ú 0 »ò 1
+    // æµ‹è¯•ç”Ÿæˆ 10 ä¸ªéšæœº 0 æˆ– 1
     for (int i = 0; i < 10; ++i) {
-        // ²âÊÔÉú³É´øÓĞËæ»ú×îµÍ 3 Î»µÄ×Ö½Ú
-        unsigned char byteWithRandomBits = generateByteWithRandomBits();
+        // æµ‹è¯•ç”Ÿæˆå¸¦æœ‰éšæœºæœ€ä½ 3 ä½çš„å­—èŠ‚
+        //unsigned char byteWithRandomBits = generateByteWithRandomBits();
 
-        // ´òÓ¡½á¹û
-        printBinary(byteWithRandomBits);
+        // æ‰“å°ç»“æœ
+        //printBinary(byteWithRandomBits);
+        std::cout << SYMBOLS[generateRandomBit()] << std::endl;
 
     }
     std::cout << std::endl;
