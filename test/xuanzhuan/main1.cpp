@@ -1,4 +1,4 @@
-#define UNICODE
+#define UNICODE //必须定义在<windows.h>前
 #include <windows.h>
 #include <cmath>
 #include <string>
@@ -38,8 +38,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
   }
   return (int)msg.wParam;
 }
-
-
 
 ATOM MyRegisterClass(HINSTANCE hInstance) {
   WNDCLASSEXW wcex = {0};             // 初始化为零，清空所有成员
@@ -81,9 +79,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    static HDC hdcMem;
-    static HBITMAP hbmMem;
-    
     switch (uMsg) {
         case WM_PAINT:
         {
@@ -91,30 +86,50 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             HDC hdc = GetDC(hwnd);
             RECT rect;
             GetClientRect(hwnd, &rect);
+            int cx = (rect.left + rect.right) / 2;  // 圆心 x
+            int cy = (rect.top + rect.bottom) / 2;  // 圆心 y
+            int radius = 300;  // 圆的半径
 
-            // 设置旋转角度（以角度为单位，转为弧度）
-            XFORM xForm;
-            xForm.eM11 = (FLOAT)cos(30 * 3.14159 / 180);  // 旋转矩阵的值
-            xForm.eM12 = (FLOAT)sin(30 * 3.14159 / 180);
-            xForm.eM21 = (FLOAT)-sin(30 * 3.14159 / 180);
-            xForm.eM22 = (FLOAT)cos(30 * 3.14159 / 180);
-            xForm.eDx = 0;  // 不平移
-            xForm.eDy = 0;  // 不平移
-
-            // 设置旋转
-            SetWorldTransform(hdc, &xForm);
-
-            // 设置文本
-            const WCHAR* text = L"旋转的文字";
-            SetTextColor(hdc, RGB(255, 0, 0));  // 设置文字颜色为红色
-            SetBkMode(hdc, TRANSPARENT);        // 设置背景透明
-            int len=(int) wcslen(text);
-            // 绘制旋转后的文字
-            TextOut(hdc, 100, 100, text, len);
-
-            // 恢复旋转
-            ModifyWorldTransform(hdc, NULL, MWT_IDENTITY);
+            // 要绘制的文字
+            //std::string text = "ABCDEFGHIGKLMNOPQRSTUVWXYZ";
+            std::wstring text = L"将这段文字打印成一个圆圈,无法合拢也没关系";
             
+            int textLength = text.length();
+
+            // 设置文字属性
+            SetTextColor(hdc, RGB(0, 0, 255)); // 文字颜色
+            SetBkMode(hdc, TRANSPARENT);        // 背景透明
+
+            for (int i = 0; i < textLength; ++i) {
+                // 计算每个字符的位置
+                double angle = 2 * PI * i / textLength; // 计算角度
+                int x = cx + static_cast<int>(radius * cos(angle)); // 计算 x 坐标
+                int y = cy + static_cast<int>(radius * sin(angle)); // 计算 y 坐标
+
+                // 设置字符旋转的角度，使字符垂直于圆心
+                TEXTMETRIC tm;
+                GetTextMetrics(hdc, &tm);
+                double rotateAngle = angle * 180 / PI;
+
+                // 创建变换矩阵
+                XFORM xForm;
+                xForm.eM11 = (FLOAT)cos(rotateAngle * PI / 180);
+                xForm.eM12 = (FLOAT)sin(rotateAngle * PI / 180);
+                xForm.eM21 = (FLOAT)-sin(rotateAngle * PI / 180);
+                xForm.eM22 = (FLOAT)cos(rotateAngle * PI / 180);
+                xForm.eDx = 0;
+                xForm.eDy = 0;
+
+                // 应用变换
+                SetWorldTransform(hdc, &xForm);
+
+                // 绘制字符
+                TextOut(hdc, x, y, &text[i], 1);
+            }
+
+            // 恢复默认变换
+            ModifyWorldTransform(hdc, NULL, MWT_IDENTITY);
+
             // 释放设备上下文
             ReleaseDC(hwnd, hdc);
             break;
@@ -126,3 +141,4 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
+
