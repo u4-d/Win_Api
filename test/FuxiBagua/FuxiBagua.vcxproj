@@ -141,6 +141,7 @@
   <ItemGroup>
     <Image Include="FuxiBagua.ico" />
     <Image Include="small.ico" />
+    <Image Include="yin.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
