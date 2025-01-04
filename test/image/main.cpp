@@ -56,7 +56,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    static std::wstring imagePath = L"yin.bmp"; // Replace with your image path
+    static std::wstring imageYin = L"./img/yin.jpg"; // Replace with your image path
+    static std::wstring imageYang = L"./img/yang.jpg";
     static RECT clientRect;
 
     switch (uMsg) {
@@ -68,7 +69,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_PAINT: {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hwnd, &ps);
-        AnimateImage(hdc, imagePath, clientRect);
+        AnimateImage(hdc, imageYin, clientRect);
+        //AnimateImage(hdc, imageYang, clientRect);
         EndPaint(hwnd, &ps);
         return 0;
     }
@@ -88,6 +90,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect) {
     static int frame = 0;
+    //缩小的速度
     static const int maxFrames = 100;
 
     Graphics graphics(hdc);
