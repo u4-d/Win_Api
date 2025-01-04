@@ -1,9 +1,74 @@
-// ����
-    MoveToEx(hdc, centerX + diagonalDistance - halfLength,
-             centerY + diagonalDistance + halfLength, nullptr);
-    LineTo(hdc, centerX + diagonalDistance + halfLength,
-           centerY + diagonalDistance - halfLength);
+const wchar_t* BAGUAWORDS=  L"坎    巽    乾    兑    离    震    坤    艮    ";
+const wchar_t* BAGUASYMBOLS=L"☵    ☴    ☰    ☱    ☲    ☳    ☷    ☶    ";
 
-// ����
-    MoveToEx(hdc, centerX - diagonalDistance - halfLength, centerY + diagonalDistance - halfLength, nullptr);
-    LineTo(hdc, centerX - diagonalDistance + halfLength, centerY + diagonalDistance + halfLength);
+void DrawTextInCircle(HDC hdc, const std::wstring& text, int centerX, int centerY, int radius, int fontSize) {
+    int textLength = text.length();
+    if (textLength == 0) return;
+
+    // 每个字符的角度间隔（弧度制）
+    double angleStep = 2 * M_PI / textLength;
+
+    // 创建基础字体
+    HFONT hFont = CreateFont(
+        fontSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS,
+        L"Arial"
+    );
+    HFONT oldFont = (HFONT)SelectObject(hdc, hFont);
+
+    for (int i = 0; i < textLength; ++i) {
+        // 当前字符的角度（弧度）
+        double angle = i * angleStep;
+
+        // 计算字符绘制的位置
+        int x = static_cast<int>(centerX + radius * cos(angle));
+        int y = static_cast<int>(centerY - radius * sin(angle));
+
+        // 计算字符旋转角度（度数），确保垂直于圆心
+        //字体上侧朝向圆心
+        //int rotationAngle = static_cast<int>(angle * 180.0 / M_PI + 90);
+        //字体下侧朝向圆心
+        int rotationAngle = static_cast<int>(angle  * 180.0 / M_PI +270);
+        // 创建旋转字体
+        HFONT hRotatedFont = CreateFont(
+            fontSize, 0, rotationAngle * 10, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+            ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS,
+            L"Arial"
+        );
+        SelectObject(hdc, hRotatedFont);
+
+        // 绘制字符
+        WCHAR character = text[i];
+        TextOut(hdc, x, y, &character, 1);
+
+        // 删除旋转字体
+        DeleteObject(hRotatedFont);
+    }
+
+    // 恢复原始字体
+    SelectObject(hdc, oldFont);
+    DeleteObject(hFont);
+}
+LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    switch (uMsg) {
+        case WM_PAINT:
+        {
+          PAINTSTRUCT ps;
+          HDC hdc = BeginPaint(hwnd, &ps);
+            //xuanzhuan(hwnd);
+            // Call the function to draw text in a circle  ☰    ☱    ☲    ☳    ☴    ☵    ☶    ☷    
+            DrawTextInCircle(hdc, BAGUAWORDS, 400, 350, 300, 42);
+            DrawTextInCircle(hdc, BAGUASYMBOLS, 400, 350, 250, 42);
+            EndPaint(hwnd, &ps);
+            break;
+        }
+
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
+    }
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+写一个函数,可以让文字像摩天轮那样旋转起来,并且可以通过参数控制顺时针旋转还是逆时针旋转

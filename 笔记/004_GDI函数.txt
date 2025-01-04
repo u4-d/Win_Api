@@ -122,3 +122,37 @@ right 和 bottom 分别表示矩形右下角的 x 和 y 坐标。
 如果函数成功，返回值为 非零。
 如果函数失败，返回值为 零。可以通过调用 GetLastError 来获取详细的错误信息。
 
+HFONT CreateFont(
+  int     cHeight,          // 字体的高度
+  int     cWidth,           // 字体的宽度
+  int     cEscapement,      // 字形的旋转角度
+  int     cOrientation,     // 字形的方向角度
+  int     cWeight,          // 字体的粗细
+  DWORD   cItalic,          // 是否为斜体
+  DWORD   cUnderline,       // 是否有下划线
+  DWORD   cStrikeOut,       // 是否有删除线
+  DWORD   cCharSet,         // 字符集
+  DWORD   cOutPrecision,    // 输出精度
+  DWORD   cClipPrecision,   // 剪辑精度
+  DWORD   cQuality,         // 输出质量
+  DWORD   cPitchAndFamily,  // 音高和字形类别
+  LPCTSTR lpszFacename      // 字体名称
+);
+参数说明：
+cHeight：字体的高度，通常是像素单位。
+cWidth：字体的宽度，通常是像素单位。如果设置为 0，表示使用默认宽度。
+cEscapement：字体的旋转角度（以 1/10 度为单位）。一般情况下，该值为 0 表示不旋转。
+cOrientation：字体的方向角度（以 1/10 度为单位）。通常该值与 cEscapement 一致。
+cWeight：字体的粗细，常用的值有 FW_NORMAL（正常），FW_BOLD（加粗）等。
+cItalic：指定字体是否为斜体。设置为 TRUE 表示斜体，FALSE 表示非斜体。
+cUnderline：指定字体是否带有下划线。设置为 TRUE 表示下划线，FALSE 表示没有。
+cStrikeOut：指定字体是否带有删除线。设置为 TRUE 表示删除线，FALSE 表示没有。
+cCharSet：字符集。常用的值有 DEFAULT_CHARSET、ANSI_CHARSET、SYMBOL_CHARSET 等。
+cOutPrecision：输出精度。常用的值有 OUT_DEFAULT_PRECIS、OUT_TT_PRECIS 等。
+cClipPrecision：剪辑精度。常用的值有 CLIP_DEFAULT_PRECIS 等。
+cQuality：输出质量。常用的值有 DEFAULT_QUALITY、DRAFT_QUALITY、PROOF_QUALITY 等。
+cPitchAndFamily：音高和字体的类别，常见的值有 DEFAULT_PITCH、FF_DONTCARE、FF_ROMAN 等。
+lpszFacename：字体名称，表示要使用的字体。例如 "Arial"、"Times New Roman"。
+返回值：
+返回一个 HFONT 类型的句柄，表示创建的字体对象。如果失败，返回 NULL。
+
