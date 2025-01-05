@@ -1,130 +1,43 @@
-随机数是0或者1不是0到7,3个随机数(111)可以对应(乾),这个是上挂
+struct Gua{
+    int bits;
+    std::wstring words;
+    std::wstring syb;
+};
+Gua shangGua[]{
+    {0b000,L"坤",L"☷"},
+    {0b100,L"艮",L"☶"},
 
+    {0b010,L"坎",L"☵"},
+    {0b110,L"巽",L"☴"},
 
-int generateRandomBit()//随机数
-const wchar_t* BAGUAWORDS=  L"坎    巽    乾    兑    离    震    坤    艮    ";//汉字卦象
-const wchar_t* BAGUASYMBOLS=L"☵    ☴    ☰    ☱    ☲    ☳    ☷    ☶    ";//符号卦象
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    static std::wstring imageYin = L"./img/yin.jpg"; // 替换为你的图片路径
-    static std::wstring imageYang = L"./img/yang.jpg";
-    static std::wstring imageanime=L"";
-    static RECT clientRect;
+    {0b001,L"震",L"☳"},
+    {0b101,L"离",L"☲"},
 
-    switch (uMsg) {
-    case WM_CREATE:
-        GetClientRect(hwnd, &clientRect);
-        CreateWindow(L"BUTTON", L"Animate Image", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-                     10, 10, 150, 30, hwnd, (HMENU)BUTTON_ANIMATE, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
-        return 0;
+    {0b011,L"兑",L"☱"},
+    {0b111,L"乾",L"☰"},
+};
 
-    case WM_PAINT: {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hwnd, &ps);
-        EndPaint(hwnd, &ps);
-        return 0;
+void printGuaInfo() {
+    int cnt = sizeof(shangGua) / sizeof(shangGua[0]); // 获取数组的长度
+    for (int i = 0; i < cnt; i++) {
+        // 使用 std::wcout 输出宽字符字符串
+        std::wcout << L"bits: " << shangGua[i].bits 
+                   << L", words: " << shangGua[i].words 
+                   << L", syb: " << shangGua[i].syb
+                   << std::endl;
     }
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == BUTTON_ANIMATE) {
-            int yinYang=generateRandomBit();
-            if (yinYang==1){
-                imageanime=imageYang;
-            }else{
-                imageanime=imageYin;
-            }
-            
-            // 按下按钮后开始动画
-            isAnimating = true;
-            frame = 0; // 重置动画帧
-            SetTimer(hwnd, 1, 30, nullptr); // 设置定时器
-        }
-        return 0;
-
-    case WM_TIMER:
-        if (isAnimating) {
-            HDC hdc = GetDC(hwnd);
-            InvalidateRect(hwnd, nullptr, TRUE); // 强制重绘
-            AnimateImage(hdc, imageanime, clientRect);
-            ReleaseDC(hwnd, hdc);
-            
-            if (frame >= maxFrames) {
-                isAnimating = false; // 动画结束
-                KillTimer(hwnd, 1); // 停止定时器
-                ClearWindow(hwnd);
-            }
-        }
-        return 0;
-
-    case WM_DESTROY:
-        KillTimer(hwnd, 1);
-        PostQuitMessage(0);
-        return 0;
-    }
-
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
-序号	卦名	上卦	下卦	卦象
-1	乾为天	乾	乾	天上天
-2	坤为地	坤	坤	地下地
-3	水雷屯	坎	震	云雷之象
-4	山水蒙	艮	坎	山下出泉
-5	水天需	坎	乾	天上有水
-6	天水讼	乾	坎	天上行云
-7	地水师	坤	坎	地下藏水
-8	水地比	坎	坤	水附于地
-9	风天小畜	巽	乾	风行天上
-10	天泽履	乾	兑	天在泽上
-11	地天泰	坤	乾	天地交泰
-12	天地否	乾	坤	天地不交
-13	天火同人	乾	离	天上有火
-14	火天大有	离	乾	日照天上
-15	地山谦	坤	艮	山附于地
-16	雷地豫	震	坤	雷兴地中
-17	泽雷随	兑	震	雷逐泽中
-18	山风蛊	艮	巽	山下有风
-19	地泽临	坤	兑	泽上于地
-20	风地观	巽	坤	风行地上
-21	火雷噬嗑	离	震	雷电激发
-22	山火贲	艮	离	火燃山上
-23	山地剥	艮	坤	山崩于地
-24	地雷复	坤	震	雷动地中
-25	天雷无妄	乾	震	天震无妄
-26	山天大畜	艮	乾	山行天上
-27	山雷颐	艮	震	雷鸣山下
-28	泽风大过	兑	巽	泽中有风
-29	坎为水	坎	坎	水流不息
-30	离为火	离	离	火炎日丽
-31	泽山咸	兑	艮	泽中生山
-32	雷风恒	震	巽	风雷并作
-33	天山遁	乾	艮	天上有山
-34	雷天大壮	震	乾	雷动天上
-35	火地晋	离	坤	火照大地
-36	地火明夷	坤	离	日没地中
-37	风火家人	巽	离	风吹火旺
-38	火泽睽	离	兑	泽上有火
-39	水山蹇	坎	艮	山间行险
-40	雷水解	震	坎	云雷化解
-41	山泽损	艮	兑	山损其泽
-42	风雷益	巽	震	风助雷威
-43	泽天夬	兑	乾	泽满天上
-44	天风姤	乾	巽	天地有风
-45	泽地萃	兑	坤	泽聚于地
-46	地风升	坤	巽	地气上升
-47	泽水困	兑	坎	泽中无水
-48	水风井	坎	巽	地中有水
-49	泽火革	兑	离	火生于泽
-50	火风鼎	离	巽	风助火旺
-51	震为雷	震	震	雷动震天
-52	艮为山	艮	艮	山高止息
-53	风山渐	巽	艮	山上有风
-54	雷泽归妹	震	兑	雷起泽中
-55	雷火丰	震	离	雷火交辉
-56	火山旅	离	艮	山上有火
-57	巽为风	巽	巽	风行四方
-58	兑为泽	兑	兑	泽水充盈
-59	风水涣	巽	坎	风吹水涣
-60	水泽节	坎	兑	泽中有水
-61	风泽中孚	巽	兑	泽中有风
-62	雷山小过	震	艮	雷鸣山下
-63	水火既济	坎	离	水火相济
-64	火水未济	离	坎	水火不济
+int main() {
+    // 设置控制台输出为UTF-8编码
+    SetConsoleOutputCP(CP_UTF8);
+    //makeBits();
+    //makeFuxiBagua();
+    printGuaInfo();
+
+    return 0;
+}
+
+D:\code\Cpp\Win_Api\test\bits>main
+bits: 0, words:
+D:\code\Cpp\Win_Api\test\bits>
+为什么没有输出words和syb
