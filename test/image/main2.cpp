@@ -3,6 +3,8 @@
 #include <wincrypt.h>
 #include <gdiplus.h>
 #include <string>
+#include <vector>
+#include <sstream>
 
 #pragma comment (lib, "gdiplus.lib") // Crypt32.lib
 #pragma comment (lib, "Advapi32.lib")
@@ -11,26 +13,39 @@ using namespace Gdiplus;
 
 // 定义按钮的 ID
 #define BUTTON_ANIMATE 1001
+std::vector<int> randomNumbers;
+std::vector<int> randomBits;
+int frame = 0;
+const int maxFrames = 100;
+const wchar_t* BAGUAWORDS=  L"坎    巽    乾    兑    离    震    坤    艮    ";//汉字卦象
+const wchar_t* BAGUASYMBOLS=L"☵    ☴    ☰    ☱    ☲    ☳    ☷    ☶    ";//符号卦象
+
+struct Hexagram {
+    int upperTrigram;
+    int lowerTrigram;
+    const wchar_t* name;
+    const wchar_t* image;
+};
+
+// 八卦卦名表
+const Hexagram HEXAGRAM_TABLE[] = {
+    {2, 2, L"乾为天", L"天上天"},
+    {6, 6, L"坤为地", L"地下地"},
+    {0, 5, L"水雷屈", L"云雷之象"},
+    // 其他卦象省略，需完整填写
+};
 
 // 函数声明
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect);
 int generateRandomBit();
 void ClearWindow(HWND hWnd);
+int getTrigram(const std::vector<int>& bits);
+void updateDisplay(HWND hwnd);
 
-// 动画状态变量
-bool isAnimating = false;
-int frame = 0;
-const int maxFrames = 100;
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+    const wchar_t CLASS_NAME[] = L"Hexagram Window";
 
-int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
-    // 初始化 GDI+
-    GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR gdiplusToken;
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-
-    // 注册窗口类
-    const wchar_t CLASS_NAME[] = L"Sample Window Class";
     WNDCLASS wc = {};
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
@@ -38,13 +53,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
     RegisterClass(&wc);
 
-    // 创建窗口
     HWND hwnd = CreateWindowEx(
-        0,
-        CLASS_NAME,
-        L"Animate Image Example",
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+        0, CLASS_NAME, L"Hexagram Generator", WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT, 500, 400,
         NULL, NULL, hInstance, NULL);
 
     if (hwnd == NULL) {
@@ -53,77 +64,67 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
     ShowWindow(hwnd, nCmdShow);
 
-    // 消息循环
     MSG msg = {};
     while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 
-    // 关闭 GDI+
-    GdiplusShutdown(gdiplusToken);
-
     return 0;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    static std::wstring imageYin = L"./img/yin.jpg"; // 替换为你的图片路径
-    static std::wstring imageYang = L"./img/yang.jpg";
-    static std::wstring imageanime=L"";
-    static RECT clientRect;
-
     switch (uMsg) {
-    case WM_CREATE:
-        GetClientRect(hwnd, &clientRect);
-        CreateWindow(L"BUTTON", L"Animate Image", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-                     10, 10, 150, 30, hwnd, (HMENU)BUTTON_ANIMATE, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
-        return 0;
+        case WM_CREATE:
+            CreateWindow(L"BUTTON", L"Generate", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+                         10, 10, 150, 30, hwnd, (HMENU)1, (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
+            return 0;
 
-    case WM_PAINT: {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hwnd, &ps);
-        EndPaint(hwnd, &ps);
-        return 0;
-    }
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == BUTTON_ANIMATE) {
-            int yinYang=generateRandomBit();
-            if (yinYang==1){
-                imageanime=imageYang;
-            }else{
-                imageanime=imageYin;
+        case WM_COMMAND:
+            if (LOWORD(wParam) == 1) {
+                if (randomBits.size() < 6) {
+                    randomBits.push_back(generateRandomBit());
+                }
+                if (randomBits.size() == 6) {
+                    // 若随机数已达 6 个，则禁用按钮
+                    EnableWindow((HWND)lParam, FALSE);
+                }
+                updateDisplay(hwnd);
             }
-            
-            // 按下按钮后开始动画
-            isAnimating = true;
-            frame = 0; // 重置动画帧
-            SetTimer(hwnd, 1, 30, nullptr); // 设置定时器
-        }
-        return 0;
+            return 0;
 
-    case WM_TIMER:
-        if (isAnimating) {
-            HDC hdc = GetDC(hwnd);
-            InvalidateRect(hwnd, nullptr, TRUE); // 强制重绘
-            AnimateImage(hdc, imageanime, clientRect);
-            ReleaseDC(hwnd, hdc);
-            
-            if (frame >= maxFrames) {
-                isAnimating = false; // 动画结束
-                KillTimer(hwnd, 1); // 停止定时器
-                ClearWindow(hwnd);
-            }
-        }
-        return 0;
-
-    case WM_DESTROY:
-        KillTimer(hwnd, 1);
-        PostQuitMessage(0);
-        return 0;
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
     }
-
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+void updateDisplay(HWND hwnd) {
+    std::wstringstream displayText;
+
+    if (randomBits.size() >= 3) {
+        std::vector<int> upperBits(randomBits.begin(), randomBits.begin() + 3);
+        int upperTrigram = getTrigram(upperBits);
+        displayText << L"上卦: " << BAGUAWORDS[upperTrigram] << L" " << BAGUASYMBOLS[upperTrigram] << L"\n";
+    }
+    if (randomBits.size() == 6) {
+        std::vector<int> lowerBits(randomBits.begin() + 3, randomBits.end());
+        int lowerTrigram = getTrigram(lowerBits);
+        displayText << L"下卦: " << BAGUAWORDS[lowerTrigram] << L" " << BAGUASYMBOLS[lowerTrigram] << L"\n";
+
+        // 计算卦名和卦象
+        for (const auto& hexagram : HEXAGRAM_TABLE) {
+            if (hexagram.upperTrigram == getTrigram({randomBits[0], randomBits[1], randomBits[2]}) &&
+                hexagram.lowerTrigram == getTrigram({randomBits[3], randomBits[4], randomBits[5]})) {
+                displayText << L"卦名: " << hexagram.name << L"\n";
+                displayText << L"卦象: " << hexagram.image;
+                break;
+            }
+        }
+    }
+
+    SetWindowText(hwnd, displayText.str().c_str());
 }
 
 void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect) {
@@ -194,5 +195,9 @@ void ClearWindow(HWND hwnd)
 
     // 结束绘制
     EndPaint(hwnd, &ps);
+}
+
+int getTrigram(const std::vector<int>& bits) {
+    return bits[0] * 4 + bits[1] * 2 + bits[2];
 }
 
