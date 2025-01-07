@@ -1,0 +1,9 @@
+#BasedOnStyle: Microsoft
+#Microsoft IndentWidth: 4
+BasedOnStyle: Google
+IndentWidth: 4
+#IndentWidth: 2
+#BasedOnStyle: LLVM
+#BasedOnStyle: Mozilla
+#BasedOnStyle: Chromium
+#BasedOnStyle: WebKit
