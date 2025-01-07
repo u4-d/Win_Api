@@ -71,5 +71,5 @@ x64/
 #*.ico
 #*.rc
 
-.editorconfig
+#.editorconfig
 #.clang-format
