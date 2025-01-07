@@ -2,7 +2,7 @@
    DEVCAPS1.C -- Device Capabilities Display Program No. 1
                  (c) Charles Petzold, 1998
   ---------------------------------------------------------*/
-//中文备注
+// 中文备注
 #include <windows.h>
 
 #define NUMLINES ((int)(sizeof devcaps / sizeof devcaps[0]))
@@ -42,7 +42,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     static TCHAR szAppName[] = TEXT("DevCaps1");
     HWND hwnd;
     MSG msg;
-    WNDCLASS wndclass={0};
+    WNDCLASS wndclass = {0};
 
     wndclass.style = CS_HREDRAW | CS_VREDRAW;
     wndclass.lpfnWndProc = WndProc;
@@ -79,14 +79,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
                          LPARAM lParam) {
     static int cxChar, cxCaps, cyChar;
-    TCHAR szBuffer[10]={10};
+    TCHAR szBuffer[10] = {10};
     HDC hdc;
-    int i=0;
+    int i = 0;
     PAINTSTRUCT ps;
     TEXTMETRIC tm;
     HFONT hFont;  // 用于字体
-    const int LEFT=20;
-    const int RIGHT=40;
+    const int LEFT = 20;
+    const int RIGHT = 40;
 
     switch (message) {
         case WM_CREATE:
@@ -124,13 +124,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
 
                 SetTextAlign(hdc, TA_RIGHT | TA_TOP);
 
-                TextOut(hdc, LEFT * cxCaps + RIGHT * cxChar, cyChar * i, szBuffer,
+                TextOut(hdc, LEFT * cxCaps + RIGHT * cxChar, cyChar * i,
+                        szBuffer,
                         wsprintf(szBuffer, TEXT("%5d"),
                                  GetDeviceCaps(hdc, devcaps[i].iIndex)));
 
                 SetTextAlign(hdc, TA_LEFT | TA_TOP);
             }
-            TextOut(hdc, 0, cyChar *i, L"中文", lstrlen(L"中文"));
+            TextOut(hdc, 0, cyChar * i, L"中文", lstrlen(L"中文"));
             EndPaint(hwnd, &ps);
             return 0;
 
