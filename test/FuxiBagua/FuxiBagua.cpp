@@ -1,11 +1,12 @@
 ﻿// FuxiBagua.cpp : 定义应用程序的入口点。
 //
-
+#define UNICODE
 #include "FuxiBagua.h"
 
 #include <cmath>
 
 #include "framework.h"
+#pragma comment(lib, "Advapi32.lib")
 #define M_PI 3.14159265358979323846  // 手动定义 M_PI
 #define MAX_LOADSTRING 100
 // 定义每个 Unicode 字符的常量

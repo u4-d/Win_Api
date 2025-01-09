@@ -1,8 +1,9 @@
 #define UNICODE
+#include <windows.h>
 #include <fcntl.h>
 #include <io.h>
 #include <wincrypt.h>
-#include <windows.h>
+
 
 #include <bitset>
 #include <iostream>
