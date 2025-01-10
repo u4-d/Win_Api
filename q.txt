@@ -1,15 +1,24 @@
-struct {
+struct Gua {
     int bits;
-    wchar_t* words;  // std::wstring
-    wchar_t* syb;    // wchar_t*
-} baGua[]{
-    {0b000, L"坤", L"☷"}, {0b100, L"艮", L"☶"},
-
-    {0b010, L"坎", L"☵"}, {0b110, L"巽", L"☴"},
-
-    {0b001, L"震", L"☳"}, {0b101, L"离", L"☲"},
-
-    {0b011, L"兑", L"☱"}, {0b111, L"乾", L"☰"},
+    std::wstring  words;  // std::wstring
+    std::wstring  syb;    // wchar_t*
 };
-写一个函数,参数是一个int变量,查找对应的bits返回words和syb
-例如参数=0,则返回"坤☷"
+
+void getBaGua(int bits, std::wstring& words, std::wstring& syb) {
+    for (const auto& item : baGua) {
+        if (item.bits == bits) {
+            words = item.words;  // 显式转换为 std::wstring
+            syb = item.syb;      // 显式转换为 std::wstring
+            return;
+        }
+    }
+    words.clear();  // 清空字符串
+    syb.clear();    // 清空字符串
+}
+
+还是没有打印出来,
+D:\code\Cpp\Win_Api\test\bits>main1
+x: 46 hight: 101 low: 110
+shangWords:
+D:\code\Cpp\Win_Api\test\bits>
+为什么在shangWords:之后就什么都没有输出了?
