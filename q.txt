@@ -1,24 +1,4 @@
-struct Gua {
-    int bits;
-    std::wstring  words;  // std::wstring
-    std::wstring  syb;    // wchar_t*
-};
-
-void getBaGua(int bits, std::wstring& words, std::wstring& syb) {
-    for (const auto& item : baGua) {
-        if (item.bits == bits) {
-            words = item.words;  // 显式转换为 std::wstring
-            syb = item.syb;      // 显式转换为 std::wstring
-            return;
-        }
-    }
-    words.clear();  // 清空字符串
-    syb.clear();    // 清空字符串
-}
-
-还是没有打印出来,
-D:\code\Cpp\Win_Api\test\bits>main1
-x: 46 hight: 101 low: 110
-shangWords:
-D:\code\Cpp\Win_Api\test\bits>
-为什么在shangWords:之后就什么都没有输出了?
+gcc.exe安装目录D:\Tools\mingw64\bin
+include目录D:\Tools\mingw64\x86_64-w64-mingw32\include
+lib目录D:\Tools\mingw64\x86_64-w64-mingw32\lib
+使用cmake和gcc编写c++程序,如何写makefile文件

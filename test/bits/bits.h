@@ -1,4 +1,4 @@
-#define UNICODE
+//#define UNICODE
 #include <windows.h>
 #include <fcntl.h>
 #include <io.h>

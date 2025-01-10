@@ -2,11 +2,12 @@
 
 int main() {
     // 设置控制台输出为UTF-8编码
-
-    SetConsoleOutputCP(CP_UTF8);
     _setmode(_fileno(stdout), _O_U16TEXT);  // 设置标准输出为宽字符模式
-    test1();
+    SetConsoleOutputCP(CP_UTF8);
 
+    test1();
+    // std::wcout << L"按任意键继续...\n";
+    // std::cin.get();  // 等待用户输入
     return 0;
 }
 void test1() {
@@ -83,8 +84,9 @@ void makeGuaXiang(int x, int& low, int& hight) {
     hight = (x >> 3) & 7;      // 右移 3 位后取最低 3 位
     std::bitset<3> bLow(low);  // 转换为32位二进制表示
     std::bitset<3> bHight(hight);
-    std::cout << "x: " << x << " hight: " << bHight << " low: " << bLow
-              << std::endl;
+    std::wcout << L"x: " << x << L" hight: " << bHight << L" low: " << bLow
+               << std::endl;
+    std::wcout.flush();  // 手动刷新缓冲区
     getBaGua(hight, shangWords, shangSyb);
     getBaGua(low, xiaWords, xiaSyb);
     /*
@@ -99,7 +101,7 @@ void makeGuaXiang(int x, int& low, int& hight) {
     }
     */
     // 使用 std::wstring 来拼接
-    guaString = std::wstring(shangWords) + shangSyb + xiaWords + xiaSyb;
+    guaString = shangWords + shangSyb + xiaWords + xiaSyb;
 }
 // 函数：根据参数 bits 查找对应的 words 和 syb
 void getBaGua_old(int bits, wchar_t*& words, wchar_t*& syb) {
@@ -116,13 +118,17 @@ void getBaGua_old(int bits, wchar_t*& words, wchar_t*& syb) {
 // 函数：根据参数 bits 查找对应的 words 和 syb
 void getBaGua(int bits, std::wstring& words, std::wstring& syb) {
     for (const auto& item : baGua) {
+        /*
         std::wcout << L"检查bits: " << item.bits << L", 卦象: " << item.words
                    << L", 符号: " << item.syb << std::endl;
+        */
         if (item.bits == bits) {
             words = item.words;
             syb = item.syb;
+            /**/
             std::wcout << L"匹配到bits: " << bits << L", 卦象: " << words
                        << L", 符号: " << syb << std::endl;
+
             return;
         }
     }
