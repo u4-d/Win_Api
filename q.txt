@@ -1,43 +1,15 @@
-struct Gua{
+struct {
     int bits;
-    std::wstring words;
-    std::wstring syb;
+    wchar_t* words;  // std::wstring
+    wchar_t* syb;    // wchar_t*
+} baGua[]{
+    {0b000, L"坤", L"☷"}, {0b100, L"艮", L"☶"},
+
+    {0b010, L"坎", L"☵"}, {0b110, L"巽", L"☴"},
+
+    {0b001, L"震", L"☳"}, {0b101, L"离", L"☲"},
+
+    {0b011, L"兑", L"☱"}, {0b111, L"乾", L"☰"},
 };
-Gua shangGua[]{
-    {0b000,L"坤",L"☷"},
-    {0b100,L"艮",L"☶"},
-
-    {0b010,L"坎",L"☵"},
-    {0b110,L"巽",L"☴"},
-
-    {0b001,L"震",L"☳"},
-    {0b101,L"离",L"☲"},
-
-    {0b011,L"兑",L"☱"},
-    {0b111,L"乾",L"☰"},
-};
-
-void printGuaInfo() {
-    int cnt = sizeof(shangGua) / sizeof(shangGua[0]); // 获取数组的长度
-    for (int i = 0; i < cnt; i++) {
-        // 使用 std::wcout 输出宽字符字符串
-        std::wcout << L"bits: " << shangGua[i].bits 
-                   << L", words: " << shangGua[i].words 
-                   << L", syb: " << shangGua[i].syb
-                   << std::endl;
-    }
-}
-int main() {
-    // 设置控制台输出为UTF-8编码
-    SetConsoleOutputCP(CP_UTF8);
-    //makeBits();
-    //makeFuxiBagua();
-    printGuaInfo();
-
-    return 0;
-}
-
-D:\code\Cpp\Win_Api\test\bits>main
-bits: 0, words:
-D:\code\Cpp\Win_Api\test\bits>
-为什么没有输出words和syb
+写一个函数,参数是一个int变量,查找对应的bits返回words和syb
+例如参数=0,则返回"坤☷"

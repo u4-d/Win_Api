@@ -1,47 +1,25 @@
-#define UNICODE
-#include <windows.h>
-#include <fcntl.h>
-#include <io.h>
-#include <wincrypt.h>
-#include <bitset>
-#include <iostream>
-
-#pragma comment(lib, "Advapi32.lib")
-const wchar_t* BAGUAWORDS =
-    L"坎    巽    乾    兑    离    震    坤    艮    ";  // 汉字卦象
-const wchar_t* BAGUASYMBOLS =
-    L"☵    ☴    ☰    ☱    ☲    ☳    ☷    ☶    ";  // 符号卦象
-struct Gua {
-    int bits;
-    wchar_t* words;  // std::wstring
-    wchar_t* syb;    // wchar_t*
-};
-Gua baGua[]{
-    {0b000, L"坤", L"☷"}, {0b100, L"艮", L"☶"},
-
-    {0b010, L"坎", L"☵"}, {0b110, L"巽", L"☴"},
-
-    {0b001, L"震", L"☳"}, {0b101, L"离", L"☲"},
-
-    {0b011, L"兑", L"☱"}, {0b111, L"乾", L"☰"},
-};
-
-int generateRandomBit();
-void makeBits();
-void makeFuxiBagua();
-void modifyInt(int& num, int bit);
+#include "bits.h"
 
 int main() {
     // 设置控制台输出为UTF-8编码
-    SetConsoleOutputCP(CP_UTF8);
+    // SetConsoleOutputCP(CP_UTF8);
     // 设置 wcout 为宽字符模式
-    _setmode(_fileno(stdout), _O_U16TEXT);
+    //_setmode(_fileno(stdout), _O_U16TEXT);
     // makeBits();
-    makeFuxiBagua();
-
+    // makeFuxiBagua();
+    test1();
     return 0;
 }
-
+void test1() {
+    int n = 0;
+    for (size_t i = 0; i < 6; i++) {
+        int b = generateRandomBit();
+        modifyInt(n, b);
+        std::cout << "i: " << i << "n: " << n << "b: " << b << std::endl;
+    }
+    makeGuaXiang(n, xiaGua, shangGua);
+    std::wcout << "上挂: " << shangGua << "下挂: " << xiaGua << std::endl;
+}
 // 使用 CryptGenRandom 生成 0 或 1 的随机数
 int generateRandomBit() {
     // 申请一个随机数生成句柄
@@ -95,4 +73,29 @@ void makeFuxiBagua() {
         // 换行
         std::wcout << std::endl;
     }
+}
+
+void makeGuaXiang(int x, int& low, int& hight) {
+    // 提取低 3 位
+    low = x & 7;  // 0b111 (7) 用于保留最低 3 位
+    // 提取 4~6 位（右移 3 位后，取接下来的 3 位）
+    hight = (x >> 3) & 7;  // 右移 3 位后取最低 3 位
+    std::cout << "x: " << x << "low: " << low << "hight: " << hight
+              << std::endl;
+    getBaGua(hight, shangWords, shangSyb);
+    getBaGua(low, xiaWords, xiaSyb);
+    // 使用 std::wstring 来拼接
+    guaString = std::wstring(shangWords) + shangSyb + xiaWords + xiaSyb;
+}
+// 函数：根据参数 bits 查找对应的 words 和 syb
+void getBaGua(int bits, wchar_t*& words, wchar_t*& syb) {
+    for (const auto& item : baGua) {
+        if (item.bits == bits) {
+            words = item.words;
+            syb = item.syb;
+            return;
+        }
+    }
+    words = nullptr;
+    syb = nullptr;
 }
