@@ -1,4 +1,4 @@
-#define UNICODE
+// #define UNICODE
 #include <Windows.h>
 #include <gdiplus.h>
 #include <wincrypt.h>
