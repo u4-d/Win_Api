@@ -49,20 +49,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
         case WM_CREATE:
             GetClientRect(hwnd, &clientRect);
-            bt1Hwnd = CreateWindow(
-                L"BUTTON", L"摇挂",
-                WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 10,
-                100, 50, hwnd, (HMENU)BUTTON_ANIMATE,
-                (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
-            bt2Hwnd = CreateWindow(L"BUTTON",    // 按钮类名
-                                   L"重新来过",  // 按钮文本
-                                   WS_TABSTOP | WS_VISIBLE | WS_CHILD |
-                                       BS_DEFPUSHBUTTON,  // 按钮样式
-                                   10, 60, 100, 50,  // 按钮位置和大小
-                                   hwnd,             // 父窗口句柄
-                                   (HMENU)BUTTON2,   // 按钮ID
-                                   hInst,            // 实例句柄
-                                   NULL);            // 不需要额外数据
+            createButton(hwnd, clientRect);
             return 0;
 
         case WM_PAINT: {
@@ -77,55 +64,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         }
 
         case WM_COMMAND:
-            if (LOWORD(wParam) == BUTTON_ANIMATE) {
-                btCnt++;
-                switch (btCnt) {
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                        makeGua(hwnd);
-                        break;
-                    case 6:
-                        makeGua(hwnd);
-                        bt1Vis = FALSE;
-
-                        break;
-                    default:
-
-                        break;
-                }
-            } else if (LOWORD(wParam) == BUTTON2) {
-                resetBtnVis();
-                EnableWindow(bt1Hwnd, bt1Vis);
-            }
+            clieckedAnimate(hwnd, wParam);
             return 0;
 
         case WM_TIMER:
-            if (isAnimating) {
-                HDC hdc = GetDC(hwnd);
-                InvalidateRect(hwnd, nullptr, TRUE);  // 强制重绘
-                AnimateImage(hdc, imageanime, clientRect);
-                ReleaseDC(hwnd, hdc);
-
-                if (frame >= maxFrames) {
-                    isAnimating = false;  // 动画结束
-                    KillTimer(hwnd, 1);   // 停止定时器
-                    ClearWindow(hwnd);
-                    if (btCnt == 6) {
-                        //  发送自定义消息触发后续操作
-                        PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
-                    }
-                }
-            }
+            onTimer(hwnd, clientRect);
             return 0;
         case WM_ANIMATION_DONE:  // 自定义消息，动画完成后执行的操作
             // 在这里添加你希望在动画完成后执行的代码
             MessageBox(hwnd, L"动画完成！", L"提示", MB_OK);
             return 0;
         case WM_MAKEGUAXIANG:
-            EnableWindow(bt1Hwnd, bt1Vis);
+
             makeGuaXiang(guaXiang, shangGua, xiaGua);
             MessageBox(NULL, guaString.c_str(), L"卦象", MB_OK);
             return 0;
@@ -354,4 +304,66 @@ void makeGua(HWND hwnd) {
     InvalidateRect(hwnd, nullptr, TRUE);  // 强制重绘
     SetTimer(hwnd, 1, 30, nullptr);       // 设置定时器
     // PostMessage(hwnd, WM_TIMER, 0, 0);
+}
+
+void clieckedAnimate(HWND hwnd, WPARAM wParam) {
+    if (LOWORD(wParam) == BUTTON_ANIMATE) {
+        // btCnt++;
+        switch (++btCnt) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                makeGua(hwnd);
+                break;
+            case 6:
+                makeGua(hwnd);
+                bt1Vis = FALSE;
+                EnableWindow(bt1Hwnd, bt1Vis);
+                break;
+            default:
+
+                break;
+        }
+    } else if (LOWORD(wParam) == BUTTON2) {
+        resetBtnVis();
+        EnableWindow(bt1Hwnd, bt1Vis);
+    }
+}
+
+void onTimer(HWND hwnd, RECT clientRect) {
+    if (isAnimating) {
+        HDC hdc = GetDC(hwnd);
+        InvalidateRect(hwnd, nullptr, TRUE);  // 强制重绘
+        AnimateImage(hdc, imageanime, clientRect);
+        ReleaseDC(hwnd, hdc);
+
+        if (frame >= maxFrames) {
+            isAnimating = false;  // 动画结束
+            KillTimer(hwnd, 1);   // 停止定时器
+            ClearWindow(hwnd);
+            if (btCnt == 6) {
+                //  发送自定义消息触发后续操作
+                PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
+            }
+        }
+    }
+}
+
+void createButton(HWND hwnd, RECT clientRect) {
+    bt1Hwnd =
+        CreateWindow(L"BUTTON", L"摇挂",
+                     WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10,
+                     10, 100, 50, hwnd, (HMENU)BUTTON_ANIMATE,
+                     (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
+    bt2Hwnd = CreateWindow(
+        L"BUTTON",                                              // 按钮类名
+        L"重新来过",                                            // 按钮文本
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // 按钮样式
+        10, 60, 100, 50,  // 按钮位置和大小
+        hwnd,             // 父窗口句柄
+        (HMENU)BUTTON2,   // 按钮ID
+        hInst,            // 实例句柄
+        NULL);            // 不需要额外数据
 }

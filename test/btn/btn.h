@@ -69,3 +69,6 @@ void getBaGua(int bits, wchar_t*& words, wchar_t*& syb);
 void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect);
 void ClearWindow(HWND hWnd);
 void makeGua(HWND hwnd);
+void clieckedAnimate(HWND hwnd, WPARAM wParam);
+void onTimer(HWND hwnd, RECT clientRect);
+void createButton(HWND hwnd, RECT clientRect);
