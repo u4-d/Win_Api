@@ -18,8 +18,8 @@ void test1() {
         // std::wcout << "i: " << i << "n: " << n << "b: " << b << std::endl;
     }
     makeGuaXiang(n, xiaGua, shangGua);
-    std::wcout << "上挂: " << shangGua << "下挂: " << xiaGua << std::endl;
-    std::wcout << "卦象: " << guaString << std::endl;
+    std::wcout << L"上挂: " << shangGua << L"下挂: " << xiaGua << std::endl;
+    std::wcout << L"卦象: " << guaString << std::endl;
     std::wcout.flush();  // 手动刷新缓冲区
 }
 // 使用 CryptGenRandom 生成 0 或 1 的随机数
