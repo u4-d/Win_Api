@@ -1,4 +1,5 @@
 #include "myBits.h"
+using namespace std;
 void test1() {
     int n = 0;
     for (size_t i = 0; i < 6; i++) {
@@ -8,9 +9,9 @@ void test1() {
     }
     makeGuaXiang(n, xiaGua, shangGua);
 
-    std::wcout << L"上挂: " << shangGua << L"下挂: " << xiaGua
-               << std::endl;                            // 不会乱码
-    std::wcout << L"卦象: " << guaString << std::endl;//乱码
+    // std::wcout << L"上挂: " << shangGua << L"下挂: " << xiaGua
+    //<< std::endl;
+    // std::wcout << L"卦象: " << guaString << std::endl;
 }
 int main() {
     // 设置标准输出流为 UTF-16 编码
@@ -18,10 +19,10 @@ int main() {
         std::wcerr << L"Failed to set mode for stdout!" << std::endl;
         return 1;  // 错误处理
     }
-    
+
     test1();
-    //std::wcout << L"按任意键继续...\n";
-    // std::cin.get();  // 等待用户输入
+    // std::wcout << L"按任意键继续...\n";
+    //  std::cin.get();  // 等待用户输入
     delete[] guaString;
     return 0;
 }
@@ -77,26 +78,48 @@ void makeGuaXiang(int x, int& low, int& hight) {
     std::bitset<3> bHight(hight);
     std::wcout << L"x: " << x << L" hight: " << bHight << L" low: " << bLow
                << std::endl;
-    //std::wcout.flush();  // 手动刷新缓冲区
+
+    // 使用 std::wstring 来拼接
+    // guaString = shangWords + shangSyb + xiaWords + xiaSyb;
+    wstring sg = baGua[hight].words;
+    sg += L" ";
+    sg += baGua[hight].syb;
+    wstring sgPath = baGua[hight].path;
+    wstring xg = baGua[low].words;
+    xg += L" ";
+    xg += baGua[low].syb;
+    wstring xgPath = baGua[low].path;
+    std::wcout << L"上挂: " << sg << L" 下挂: " << xg << std::endl;
+}
+void makeGuaXiang_old(int x, int& low, int& hight) {
+    // 提取低 3 位
+    low = x & 7;  // 0b111 (7) 用于保留最低 3 位
+    // 提取 4~6 位（右移 3 位后，取接下来的 3 位）
+    hight = (x >> 3) & 7;      // 右移 3 位后取最低 3 位
+    std::bitset<3> bLow(low);  // 转换为32位二进制表示
+    std::bitset<3> bHight(hight);
+    std::wcout << L"x: " << x << L" hight: " << bHight << L" low: " << bLow
+               << std::endl;
+    // std::wcout.flush();  // 手动刷新缓冲区
     getBaGua_C(hight, shangWords, shangSyb);
     getBaGua_C(low, xiaWords, xiaSyb);
 
     // 使用 std::wstring 来拼接
-    //guaString = shangWords + shangSyb + xiaWords + xiaSyb;
+    // guaString = shangWords + shangSyb + xiaWords + xiaSyb;
     // 确保目标缓冲区有足够的空间
     size_t len1 = wcslen(shangWords);
     size_t len2 = wcslen(shangSyb);
     size_t len3 = wcslen(xiaWords);
     size_t len4 = wcslen(xiaSyb);
-  // +1 是为终止符'\0'分配空间
+    // +1 是为终止符'\0'分配空间
     guaString = new wchar_t[len1 + len2 + len3 + len4 + 10];
 
     // 使用swprintf格式化拼接
-    swprintf(guaString, len1 + len2 + len3 + len4 + 10, L"上挂:%s %s 下挂:%s %s", shangWords,
-             shangSyb, xiaWords, xiaSyb);
-    //std::wcout << L"卦象: " << guaString << std::endl;
+    swprintf(guaString, len1 + len2 + len3 + len4 + 10,
+             L"上挂:%s %s 下挂:%s %s", shangWords, shangSyb, xiaWords, xiaSyb);
+    // std::wcout << L"卦象: " << guaString << std::endl;
 }
-// 函数：根据参数 bits 查找对应的 words 和 syb 
+// 函数：根据参数 bits 查找对应的 words 和 syb
 void getBaGua_C(int bits, const wchar_t*& words, const wchar_t*& syb) {
     for (const auto& item : baGua) {
         if (item.bits == bits) {
@@ -117,7 +140,7 @@ void getBaGua_S(int bits, std::wstring& words, std::wstring& syb) {
         */
         if (item.bits == bits) {
             words = item.words;
-            //syb = item.syb;
+            // syb = item.syb;
             /**/
             std::wcout << L"匹配到bits: " << bits << L", 卦象: " << words
                        << L", 符号: " << syb << std::endl;
