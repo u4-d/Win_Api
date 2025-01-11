@@ -44,11 +44,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    static std::wstring imageYin = L"./img/yin.jpg";  // 替换为你的图片路径
-    static std::wstring imageYang = L"./img/yang.jpg";
-    static std::wstring imageanime = L"";
     static RECT clientRect;
-
+    int yinYang;
     switch (uMsg) {
         case WM_CREATE:
             GetClientRect(hwnd, &clientRect);
@@ -71,6 +68,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
+            // 绘制图像动画
+            if (isAnimating) {
+                AnimateImage(hdc, imageanime, clientRect);
+            }
             EndPaint(hwnd, &ps);
             return 0;
         }
@@ -78,22 +79,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         case WM_COMMAND:
             if (LOWORD(wParam) == BUTTON_ANIMATE) {
                 btCnt++;
-                // 按下6次后解卦
-                if (btCnt >= 6) {
-                    bt1Vis = FALSE;
-                    PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
-                } else {
-                    int yinYang = generateRandomBit();
-                    modifyInt(guaXiang, yinYang);
-                    if (yinYang == 1) {
-                        imageanime = imageYang;
-                    } else {
-                        imageanime = imageYin;
-                    }
-                    // 按下按钮后开始动画
-                    isAnimating = true;
-                    frame = 0;                       // 重置动画帧
-                    SetTimer(hwnd, 1, 30, nullptr);  // 设置定时器
+                switch (btCnt) {
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        makeGua(hwnd);
+                        break;
+                    case 6:
+                        makeGua(hwnd);
+                        bt1Vis = FALSE;
+
+                        break;
+                    default:
+
+                        break;
                 }
             } else if (LOWORD(wParam) == BUTTON2) {
                 resetBtnVis();
@@ -112,9 +113,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                     isAnimating = false;  // 动画结束
                     KillTimer(hwnd, 1);   // 停止定时器
                     ClearWindow(hwnd);
-                    if (btCnt % 3 == 0) {
-                        // 发送自定义消息触发后续操作
-                        PostMessage(hwnd, WM_USER + 1, 0, 0);
+                    if (btCnt == 6) {
+                        //  发送自定义消息触发后续操作
+                        PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
                     }
                 }
             }
@@ -337,4 +338,20 @@ void getBaGua(int bits, wchar_t*& words, wchar_t*& syb) {
     }
     words = nullptr;
     syb = nullptr;
+}
+// 动画摇挂
+void makeGua(HWND hwnd) {
+    int yinYang = generateRandomBit();
+    modifyInt(guaXiang, yinYang);
+    if (yinYang == 1) {
+        imageanime = imageYang;
+    } else {
+        imageanime = imageYin;
+    }
+    // 按下按钮后开始动画
+    isAnimating = true;
+    frame = 0;                            // 重置动画帧
+    InvalidateRect(hwnd, nullptr, TRUE);  // 强制重绘
+    SetTimer(hwnd, 1, 30, nullptr);       // 设置定时器
+    // PostMessage(hwnd, WM_TIMER, 0, 0);
 }

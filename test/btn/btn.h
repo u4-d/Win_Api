@@ -12,6 +12,8 @@ using namespace Gdiplus;
 #define BUTTON1 1001
 #define BUTTON2 1002
 #define BUTTON_ANIMATE 1003
+#define WM_ANIMATION_DONE (WM_USER + 1)  // 自定义消息
+#define WM_MAKEGUAXIANG (WM_USER + 2)    // 6次以后制作卦象
 BOOL bt1Vis = TRUE;  // 按钮1是否可以点击 按下6次后不可再点击
 int btCnt = 0;       // 按钮按下次数
 int guaXiang = 0;    // 制作的卦象
@@ -24,12 +26,12 @@ wchar_t* xiaSyb = nullptr;  // 下挂
 std::wstring guaString = L"";
 HWND bt1Hwnd, bt2Hwnd;  // 按钮1,2代码
 constexpr int MAX_LOADSTRING = 100;
-HINSTANCE hInst;                                  // 当前实例
-WCHAR szTitle[MAX_LOADSTRING];                    // 标题栏文本
-WCHAR szWindowClass[MAX_LOADSTRING];              // 主窗口类名
-static std::wstring imageYin = L"./img/yin.jpg";  // 替换为你的图片路径
-static std::wstring imageYang = L"./img/yang.jpg";
-static std::wstring imageanime = L"";
+HINSTANCE hInst;                           // 当前实例
+WCHAR szTitle[MAX_LOADSTRING];             // 标题栏文本
+WCHAR szWindowClass[MAX_LOADSTRING];       // 主窗口类名
+std::wstring imageYin = L"./img/yin.jpg";  // 替换为你的图片路径
+std::wstring imageYang = L"./img/yang.jpg";
+std::wstring imageanime = L"";
 // 动画状态变量
 bool isAnimating = false;
 int frame = 0;
@@ -66,3 +68,4 @@ void makeGuaXiang(int x, int& low, int& hight);
 void getBaGua(int bits, wchar_t*& words, wchar_t*& syb);
 void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect);
 void ClearWindow(HWND hWnd);
+void makeGua(HWND hwnd);

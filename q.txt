@@ -1,4 +1,0 @@
-gcc.exe安装目录D:\Tools\mingw64\bin
-include目录D:\Tools\mingw64\x86_64-w64-mingw32\include
-lib目录D:\Tools\mingw64\x86_64-w64-mingw32\lib
-使用cmake和gcc编写c++程序,如何写makefile文件
