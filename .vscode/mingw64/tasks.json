@@ -1,0 +1,67 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "Build GUI",
+            "command": "gcc",  // 使用 MinGW-w64 的 g++ 编译器
+            "args": [
+                "${file}",  // 输入源文件
+                "-o", "${fileDirname}\\${fileBasenameNoExtension}.exe",  // 输出文件路径
+                "-utf-8",
+                "-ggdb", // 生成和调试有关的信息
+                "-Wall", // 开启额外警告
+                "-municode",
+                "-mwindows",
+                //"-lwinmm",//使用PlaySound时
+                //"-fexec-charset=utf-8", 中文编码
+                //"-fexec-charset=GBK",
+                //"-finput-charset=UTF-8",
+                "-lgdi32",
+                //"-lkernel32.lib", 
+				//"-luser32.lib" ,
+                "-Wno-unknown-pragmas",
+                //"-static-libgcc", // 静态链接
+                //"-fcolor-diagnostics", // 彩色的错误信息？但貌似clang默认开启而gcc不接受此参数
+                //"--target=x86_64-w64-mingw", // clang的默认target为msvc，不加这一条就会找不到头文件；Linux下去掉这一条
+                //"-std=c++17" // C语言最新标准为c11，或根据自己的需要进行修改 
+                //"-static"  // 如果需要静态链接，使用 -static 参数
+            ],
+            "options": {
+                "cwd": "${fileDirname}"  // 设置当前工作目录
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "编译器: gcc (MinGW-w64)"
+        },
+        
+    {
+        "type": "cppbuild",
+        "label": "Build Console",
+        "command": "gcc",
+        "args": [
+            "${file}",
+            "-o", "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "-utf-8",
+            "-ggdb",
+            "-Wall",
+            //"-municode",
+            "-mconsole", // 显示终端窗口
+            //"-lwinmm",
+            "-lgdi32",
+            "-lstdc++",
+            "-Wno-unknown-pragmas"
+        ],
+        "options": {
+            "cwd": "${fileDirname}"
+        },
+        "problemMatcher": [
+            "$gcc"
+        ],
+        "group": "build",
+        "detail": "编译器: gcc (MinGW-w64) - 控制台应用程序"
+    }
+    ]
+}

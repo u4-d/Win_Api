@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:/Tools/mingw64/include",
+                "D:\\Tools\\mingw64\\x86_64-w64-mingw32\\include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "D:\\Tools\\mingw64\\bin\\gcc.exe",  // MinGW-w64 编译器路径
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"  // 设置 IntelliSense 为 GCC 模式
+        }
+    ],
+    "version": 4
+}
