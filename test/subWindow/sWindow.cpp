@@ -209,7 +209,7 @@ void onCliecked(HWND hwnd, WPARAM wParam) {
 
                 break;
         }
-    } else if (LOWORD(wParam) == BUTTON2) {
+    } else if (LOWORD(wParam) == BUTTON_RESET) {
         resetBtnVis();
         EnableWindow(bt1Hwnd, bt1Vis);
     }
