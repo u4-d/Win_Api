@@ -1,7 +1,6 @@
 {
     "files.associations": {
         "*.c": "c",
-        "windows.h": "c",
         "iostream": "cpp",
         "bitset": "cpp",
         "atomic": "cpp",

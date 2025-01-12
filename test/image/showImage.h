@@ -1,8 +1,6 @@
 // #define UNICODE
 #include <windows.h>
 #include <gdiplus.h>
-
-
 #include <string>
 
 #pragma comment(lib, "gdiplus.lib")
@@ -18,5 +16,5 @@ int frame = 0;
 const int maxFrames = 100;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect);
+void AnimateImage(HDC hdc, const std::wstring &imagePath, RECT clientRect);
 void ClearWindow(HWND hwnd);

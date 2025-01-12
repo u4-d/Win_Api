@@ -7,3 +7,6 @@ IndentWidth: 4
 #BasedOnStyle: Mozilla
 #BasedOnStyle: Chromium
 #BasedOnStyle: WebKit
+IncludeCategories:
+  - "#include.*windows.h"
+  - "#include.*"
