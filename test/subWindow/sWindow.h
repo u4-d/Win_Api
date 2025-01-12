@@ -10,11 +10,12 @@ using namespace Gdiplus;
 using namespace std;
 
 #define BUTTON1 1001
-#define BUTTON2 1002
+#define BUTTON_RESET 1002
 #define BUTTON_ANIMATE 1003
 #define WM_ANIMATION_DONE (WM_USER + 1)  // 自定义消息
 #define WM_MAKEGUAXIANG (WM_USER + 2)    // 6次以后制作卦象
 
+ULONG_PTR gdiplusToken;
 const wchar_t CLASS_NAME[] = L"Main Window Class";
 const wchar_t CHILD_CLASS_NAME[] = L"Child Window Class";
 BOOL bt1Vis = TRUE;  // 按钮1是否可以点击 按下6次后不可再点击
@@ -40,8 +41,11 @@ wstring imgFileName[] = {
 bool isAnimating = false;
 int frame = 0;
 const int maxFrames = 100;
-// 设置显示的固定位置和大小
+// 文本输出的起始位置
+float textX = 50.0f;   // X 坐标
+float textY = 270.0f;  // Y 坐标
 
+// 设置显示的固定位置和大小
 struct imgPos {
     int x;  // 图片左上角 X 坐标
     int y;  // 图片左上角 Y 坐标
@@ -77,6 +81,7 @@ void modifyInt(int& num, int bit);
 int reverseBits(int n);
 void showGuaImage(HWND hwnd);
 void DrawTextLines();
+void drawYao(int i, const std::wstring& imagePath);
 
 // 动画窗口函数
 void onCliecked(HWND hwnd, WPARAM wParam);

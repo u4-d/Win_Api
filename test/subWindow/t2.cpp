@@ -1,101 +1,99 @@
 #include "sWindow.h"
 
-int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                      LPWSTR lpCmdLine, int nCmdShow) {
-    WNDCLASS wc = {};
-    wc.lpfnWndProc = WndProc;  // 主窗口过程
-    wc.hInstance = GetModuleHandle(nullptr);
-    wc.lpszClassName = CLASS_NAME;
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+// 程序入口
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                   LPSTR lpCmdLine, int nCmdShow) {
+    // 初始化 GDI+
+    GdiplusStartupInput gdiplusStartupInput;
+    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
-    if (!RegisterClass(&wc)) {
-        return 0;
-    }
+    WNDCLASS wc = {0};
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = L"MainWindow";
+    RegisterClass(&wc);
 
-    // 注册子窗口的窗口类
-    wc.lpfnWndProc = SubWndProc;
-    wc.lpszClassName = CHILD_CLASS_NAME;
-    if (!RegisterClass(&wc)) {
-        return 0;
-    }
+    WNDCLASS subWc = {0};
+    subWc.lpfnWndProc = SubWndProc;
+    subWc.hInstance = hInstance;
+    subWc.lpszClassName = L"SubWindow";
+    RegisterClass(&subWc);
 
-    // 在屏幕中心创建主窗口
-    hMainWnd = CreateWindowEx(
-        0, CLASS_NAME, L"伏羲八卦", WS_OVERLAPPEDWINDOW,
-        (GetSystemMetrics(SM_CXSCREEN) - 1000) / 2,  // X position (centered)
-        (GetSystemMetrics(SM_CYSCREEN) - 800) / 2,   // Y position (centered)
-        1000, 800,                                   // Width and Height
-        nullptr, nullptr, wc.hInstance, nullptr);
+    HWND hwnd = CreateWindow(wc.lpszClassName, L"Window Layout Example",
+                             WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+                             800, 600, NULL, NULL, hInstance, NULL);
 
-    if (!hMainWnd) {
-        return 0;
-    }
-
-    ShowWindow(hMainWnd, SW_SHOW);
-    UpdateWindow(hMainWnd);
+    ShowWindow(hwnd, nCmdShow);
+    UpdateWindow(hwnd);
 
     MSG msg;
-    while (GetMessage(&msg, nullptr, 0, 0)) {
+    while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 
+    GdiplusShutdown(gdiplusToken);
     return 0;
 }
 
-// 窗口过程函数
+// 主窗口过程
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
-        case WM_SIZE: {
-            // 获取主窗口的客户区大小
-            RECT clientRect;
-            GetClientRect(hwnd, &clientRect);
+        case WM_CREATE: {
+            RECT rect;
+            GetClientRect(hwnd, &rect);
 
-            // 计算宽度和高度
-            int width = clientRect.right - clientRect.left;
-            int height = clientRect.bottom - clientRect.top;
-
-            // 左侧区域宽度（40%），右侧区域宽度（60%）
+            int width = rect.right - rect.left;
+            int height = rect.bottom - rect.top;
             int leftWidth = width * 40 / 100;
-            int rightWidth = width - leftWidth;  // 右侧占 60%
-
-            // 上下区域的高度比例（上3下7）
+            int rightWidth = width - leftWidth;
             int topHeight = height * 3 / 10;
             int bottomHeight = height - topHeight;
 
-            // 调整子窗口的位置和大小
-            // 左上窗口
-            MoveWindow(hLeftTop, 0, 0, leftWidth, topHeight, TRUE);
+            hLeftTop = CreateWindow(
+                L"SubWindow", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0,
+                leftWidth, topHeight, hwnd, (HMENU)1,
+                (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 
-            // 左下窗口
-            MoveWindow(hLeftBottom, 0, topHeight, leftWidth, bottomHeight,
-                       TRUE);
+            hLeftBottom = CreateWindow(
+                L"SubWindow", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 0,
+                topHeight, leftWidth, bottomHeight, hwnd, (HMENU)2,
+                (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 
-            // 右侧窗口
-            MoveWindow(hRight, leftWidth, 0, rightWidth, height, TRUE);
+            hRight = CreateWindow(
+                L"SubWindow", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER,
+                leftWidth, 0, rightWidth, height, hwnd, (HMENU)3,
+                (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 
+            // 创建按钮
+            CreateWindow(
+                L"BUTTON", L"Animate", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                10, 10, 100, 30, hLeftTop, (HMENU)BUTTON_ANIMATE,
+                (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
+
+            CreateWindow(
+                L"BUTTON", L"Reset", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 10,
+                50, 100, 30, hLeftTop, (HMENU)BUTTON_RESET,
+                (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
             return 0;
         }
 
-        case WM_CREATE: {
-            // 创建子窗口：左上
-            hLeftTop = CreateWindowEx(0, CHILD_CLASS_NAME, L"Left Top",
-                                      WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0,
-                                      0, 0, hwnd, nullptr,
-                                      GetModuleHandle(nullptr), nullptr);
+        case WM_SIZE: {
+            RECT rect;
+            GetClientRect(hwnd, &rect);
 
-            // 创建子窗口：左下
-            hLeftBottom = CreateWindowEx(0, CHILD_CLASS_NAME, L"Left Bottom",
-                                         WS_CHILD | WS_VISIBLE | WS_BORDER, 0,
-                                         0, 0, 0, hwnd, nullptr,
-                                         GetModuleHandle(nullptr), nullptr);
+            int width = rect.right - rect.left;
+            int height = rect.bottom - rect.top;
+            int leftWidth = width * 40 / 100;
+            int rightWidth = width - leftWidth;
+            int topHeight = height * 3 / 10;
+            int bottomHeight = height - topHeight;
 
-            // 创建子窗口：右侧
-            hRight = CreateWindowEx(0, CHILD_CLASS_NAME, L"Right Pane",
-                                    WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 0,
-                                    0, hwnd, nullptr, GetModuleHandle(nullptr),
-                                    nullptr);
-            createButton(hLeftTop);
+            MoveWindow(hLeftTop, 0, 0, leftWidth, topHeight, TRUE);
+            MoveWindow(hLeftBottom, 0, topHeight, leftWidth, bottomHeight,
+                       TRUE);
+            MoveWindow(hRight, leftWidth, 0, rightWidth, height, TRUE);
+
             return 0;
         }
 
@@ -103,116 +101,44 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             PostQuitMessage(0);
             return 0;
     }
-
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-// 子窗口过程（这里只是为了演示，可以在这里自定义每个子窗口的功能）
+// 子窗口过程
 LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
                             LPARAM lParam) {
-    // 根据窗口句柄判断当前是哪个子窗口
-    if (hwnd == hLeftTop) {
-        // 处理左上子窗口的消息
-        switch (uMsg) {
-            case WM_COMMAND:
-                onCliecked(hRight, wParam);
-                return 0;
-            case WM_PAINT:
-                // 绘制左上窗口内容
-                break;
-                // 其他左上窗口的消息处理
-        }
-    } else if (hwnd == hLeftBottom) {
-        // 处理左下子窗口的消息
-        switch (uMsg) {
-            case WM_PAINT:
-                // 绘制左下窗口内容
-                break;
-                // 其他左下窗口的消息处理
-        }
-    } else if (hwnd == hRight) {
-        // 处理右侧子窗口的消息
-        switch (uMsg) {
-            case WM_PAINT: {
-                PAINTSTRUCT ps;
-                HDC hdc = BeginPaint(hRight, &ps);
-                // 绘制图像动画
-                if (isAnimating) {
-                    AnimateImage(hdc, imageanime);  // 假设这是一个动画函数
-                }
-                EndPaint(hRight, &ps);
+    switch (uMsg) {
+        case WM_COMMAND:
+            if (LOWORD(wParam) == BUTTON_ANIMATE) {  // Animate 按钮
+                isAnimating = true;
+                InvalidateRect(hRight, NULL, TRUE);
+                InvalidateRect(hLeftBottom, NULL, TRUE);
+            } else if (LOWORD(wParam) == BUTTON_RESET) {  // Reset 按钮
+                isAnimating = false;
+                InvalidateRect(hRight, NULL, TRUE);
+                InvalidateRect(hLeftBottom, NULL, TRUE);
             }
-                return 0;
-            // 其他右侧窗口的消息处理
-            case WM_COMMAND:
-                onCliecked(hRight, wParam);
-                return 0;
-            case WM_TIMER:
-                onTimer(hRight);
-                break;
-            case WM_MAKEGUAXIANG:
-                showGuaImage(hRight);
-                DrawTextLines();
-                KillTimer(hRight, 1);
-                break;
+            return 0;
+
+        case WM_PAINT: {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+
+            if (hwnd == hLeftBottom) {
+                if (isAnimating) {
+                    drawYao(1, L"./img/yin.jpg");
+                }
+            } else if (hwnd == hRight) {
+                if (isAnimating) {
+                    AnimateImage(hdc, L"example.png");  // 替换为实际图片路径
+                }
+            }
+
+            EndPaint(hwnd, &ps);
+            return 0;
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
-}
-
-// 函数：清除窗口内容并更新
-void clearWindow(HWND hwnd) {
-    // 触发窗口重绘 参数 NULL 表示整个窗口区域，TRUE 表示要清除区域
-    // InvalidateRect(hwnd, &animaRect, TRUE);  //
-    // 获取窗口的客户端区域
-    PAINTSTRUCT ps;
-    HDC hdc = BeginPaint(hwnd, &ps);  // 获取绘图设备上下文
-    // 使用背景颜色清除窗口
-    RECT rc;
-    GetClientRect(hwnd, &rc);  // 获取窗口的客户区矩形
-    // 使用窗口背景色填充窗口
-    FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
-    // 结束绘制
-    EndPaint(hwnd, &ps);
-}
-
-void createButton(HWND hwnd) {
-    bt1Hwnd =
-        CreateWindow(L"BUTTON", L"摇挂",
-                     WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10,
-                     10, 100, 50, hwnd, (HMENU)BUTTON_ANIMATE,
-                     (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
-    bt2Hwnd = CreateWindow(
-        L"BUTTON", L"重新来过",
-        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 60, 100, 50,
-        hwnd, (HMENU)BUTTON_RESET,
-        (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),  // 实例句柄
-        NULL);  // 不需要额外数据
-}
-
-void onCliecked(HWND hwnd, WPARAM wParam) {
-    if (LOWORD(wParam) == BUTTON_ANIMATE) {
-        switch (++btCnt) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                makeGua(hwnd);
-                break;
-            case 6:
-                makeGua(hwnd);
-                bt1Vis = FALSE;
-                EnableWindow(bt1Hwnd, bt1Vis);
-                break;
-            default:
-
-                break;
-        }
-    } else if (LOWORD(wParam) == BUTTON2) {
-        resetBtnVis();
-        EnableWindow(bt1Hwnd, bt1Vis);
-    }
 }
 
 void AnimateImage(HDC hdc, const std::wstring& imagePath) {
@@ -242,6 +168,46 @@ void AnimateImage(HDC hdc, const std::wstring& imagePath) {
     }
 
     ++frame;  // 增加帧计数
+}
+// 函数：清除窗口内容并更新
+void clearWindow(HWND hwnd) {
+    // 触发窗口重绘 参数 NULL 表示整个窗口区域，TRUE 表示要清除区域
+    // InvalidateRect(hwnd, &animaRect, TRUE);  //
+    // 获取窗口的客户端区域
+    PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(hwnd, &ps);  // 获取绘图设备上下文
+    // 使用背景颜色清除窗口
+    RECT rc;
+    GetClientRect(hwnd, &rc);  // 获取窗口的客户区矩形
+    // 使用窗口背景色填充窗口
+    FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
+    // 结束绘制
+    EndPaint(hwnd, &ps);
+}
+
+void onCliecked(HWND hwnd, WPARAM wParam) {
+    if (LOWORD(wParam) == BUTTON_ANIMATE) {
+        switch (++btCnt) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                makeGua(hwnd);
+                break;
+            case 6:
+                makeGua(hwnd);
+                bt1Vis = FALSE;
+                EnableWindow(bt1Hwnd, bt1Vis);
+                break;
+            default:
+
+                break;
+        }
+    } else if (LOWORD(wParam) == BUTTON_RESET) {
+        resetBtnVis();
+        EnableWindow(bt1Hwnd, bt1Vis);
+    }
 }
 
 void resetBtnVis() {
@@ -397,7 +363,7 @@ void DisplayImage(HWND hwnd, const std::wstring& imagePath, guaPosSize ps) {
     GdiplusShutdown(gdiplusToken);
 }
 
-void DrawTextLines() {
+void drawYao(int i, const std::wstring& imagePath) {
     // 初始化 GDI+
     GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
@@ -409,15 +375,15 @@ void DrawTextLines() {
     Font font(L"Arial", 18);                  // 选择字体和字号
     SolidBrush brush(Color(255, 0, 0, 255));  // 蓝色画刷
 
-    // 文本输出的起始位置
-    float x = 200.0f;  // X 坐标
-    float y = 100.0f;  // Y 坐标
-
     // 循环输出每行文字
-    for (int i = 0; i < 6; ++i) {
-        graphics.DrawString(sixYao[i].c_str(), -1, &font, PointF(x, y), &brush);
-        y += 30.0f;  // 每行之间的间距
-    }
+    graphics.DrawString(yao[i].c_str(), -1, &font, PointF(textX, textY),
+                        &brush);
+    Image image(imagePath.c_str());
+    int x = textX + 100;
+    int y = textY - 5;
+    graphics.DrawImage(&image, x, y, 100, 40);
+    textY -= 40.0f;
+
     // 清理资源
     ReleaseDC(hLeftBottom, hdc);
     GdiplusShutdown(gdiplusToken);
