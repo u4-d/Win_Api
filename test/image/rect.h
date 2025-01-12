@@ -58,14 +58,14 @@ const int maxFrames = 100;
 
 // 主窗口
 RECT clientRect = {500, 200, 1500, 900};
-RECT wordsRect = {5, 110, 400, 900};   // 显示爻的区域
-RECT animaRect = {400, 0, 1500, 900};  // 动画区域
+RECT wordsRect;  // 显示爻的区域
+RECT animaRect;  // 动画区域
 HWND mainHwnd;
 // Register the window class
 const wchar_t CLASS_NAME[] = L"主窗口";
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect);
+void AnimateImage(HDC hdc, const std::wstring& imagePath);
 void ClearWindow(HWND hwnd);
 void createMainWindow(HINSTANCE hInstance, int nCmdShow);
 void DisplayImage(HWND hwnd, const std::wstring& imagePath, guaPosSize ps);
@@ -76,7 +76,8 @@ int generateRandomBit();
 void modifyInt(int& num, int bit);
 void makeGua(HWND hwnd);
 void clieckedAnimate(HWND hwnd, WPARAM wParam);
-void onTimer(HWND hwnd, RECT clientRect);
+void onTimer(HWND hwnd);
 void resetBtnVis();
 void DrawTextLines();
 void setRect();
+int reverseBits(int n);

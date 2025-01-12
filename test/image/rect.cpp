@@ -1,5 +1,5 @@
-#include "showImage.h"
-
+#include "rect.h"
+// http://zhangwenli.com/biangua/#010101
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPWSTR lpCmdLine, int nCmdShow) {
     // Initialize GDI+
@@ -30,14 +30,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
         case WM_CREATE:
             // 获取窗口矩形
-            // GetClientRect(hwnd, &clientRect);
+            setRect();
             return 0;
         case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
             // 绘制图像动画
             if (isAnimating) {
-                AnimateImage(hdc, imageanime, clientRect);
+                AnimateImage(hdc, imageanime);
             }
             EndPaint(hwnd, &ps);
             return 0;
@@ -47,11 +47,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             return 0;
         case WM_SIZE:
             // 窗口大小改变时强制重绘
-            ClearWindow(hwnd);
-            InvalidateRect(hwnd, nullptr, TRUE);
+            // ClearWindow(hwnd);
+            setRect();
+            // InvalidateRect(hwnd, nullptr, TRUE);
             return 0;
         case WM_TIMER:
-            onTimer(hwnd, clientRect);
+            onTimer(hwnd);
             return 0;
         case WM_MAKEGUAXIANG:
             showGuaImage(hwnd);
@@ -66,22 +67,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect) {
+void AnimateImage(HDC hdc, const std::wstring& imagePath) {
     Graphics graphics(hdc);
     Image image(imagePath.c_str());
-
     int imgWidth = image.GetWidth();
     int imgHeight = image.GetHeight();
-
-    // 根据当前帧计算缩放比例
+    //  根据当前帧计算缩放比例
     float scale = 1.0f - static_cast<float>(frame) / maxFrames;
     if (scale < 0.0f) scale = 0.0f;  // 确保比例不为负值
 
     int scaledWidth = static_cast<int>(imgWidth * scale);
     int scaledHeight = static_cast<int>(imgHeight * scale);
 
-    int centerX = (clientRect.right - clientRect.left) / 2;
-    int centerY = (clientRect.bottom - clientRect.top) / 2;
+    int centerX = (animaRect.right - animaRect.left) / 2;
+    int centerY = (animaRect.bottom - animaRect.top) / 2;
 
     int x = centerX - scaledWidth / 2;
     int y = centerY - scaledHeight / 2;
@@ -96,18 +95,18 @@ void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect) {
 
 // 函数：清除窗口内容并更新
 void ClearWindow(HWND hwnd) {
-    // 触发窗口重绘
-    InvalidateRect(hwnd, NULL,
-                   TRUE);  // 参数 NULL 表示整个窗口区域，TRUE 表示要清除区域
+    // 触发窗口重绘 参数 NULL 表示整个窗口区域，TRUE 表示要清除区域
+    // InvalidateRect(hwnd, &animaRect, TRUE);  //
 
     // 获取窗口的客户端区域
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(hwnd, &ps);  // 获取绘图设备上下文
 
     // 使用背景颜色清除窗口
-    RECT rc;
-    GetClientRect(hwnd, &rc);  // 获取窗口的客户区矩形
-    FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));  // 使用窗口背景色填充窗口
+    // RECT rc;
+    // GetClientRect(hwnd, &animaRect);  // 获取窗口的客户区矩形
+    FillRect(hdc, &animaRect,
+             (HBRUSH)(COLOR_WINDOW + 1));  // 使用窗口背景色填充窗口
 
     // 结束绘制
     EndPaint(hwnd, &ps);
@@ -162,10 +161,11 @@ void showGuaImage(HWND hwnd) {
         xiaImgPos.p.x = shangImgPos.p.x + imgGuaSize.width + 5;
         xiaImgPos.p.y = shangImgPos.p.y;
         xiaImgPos.s = imgGuaSize;
+        int newGx = reverseBits(guaXiang);
         // 提取 4~6 位（右移 3 位后，取接下来的 3 位）
-        int hight = (guaXiang >> 3) & 7;  // 右移 3 位后取最低 3 位
-                                          // 提取低 3 位
-        int low = guaXiang & 7;           // 0b111 (7) 用于保留最低 3 位
+        int hight = (newGx >> 3) & 7;  // 右移 3 位后取最低 3 位
+                                       // 提取低 3 位
+        int low = newGx & 7;           // 0b111 (7) 用于保留最低 3 位
 
         // 在窗口绘制时显示图片
         DisplayImage(hwnd, imgFileName[hight],
@@ -275,11 +275,11 @@ void clieckedAnimate(HWND hwnd, WPARAM wParam) {
     }
 }
 
-void onTimer(HWND hwnd, RECT clientRect) {
+void onTimer(HWND hwnd) {
     if (isAnimating) {
         HDC hdc = GetDC(hwnd);
         InvalidateRect(hwnd, nullptr, TRUE);  // 强制重绘
-        AnimateImage(hdc, imageanime, clientRect);
+        AnimateImage(hdc, imageanime);
         ReleaseDC(hwnd, hdc);
 
         if (frame >= maxFrames) {
@@ -349,4 +349,23 @@ void setRect() {
     animaRect.top = clientRect.top;
     animaRect.right = clientRect.right;  // 右侧区域宽度到 clientRect 的右边
     animaRect.bottom = clientRect.bottom;
+}
+
+// 按2进制反转
+int reverseBits(int n) {
+    int reversed = 0;
+
+    // 遍历每一位，最多6位
+    for (int i = 0; i < 6; i++) {
+        // 取n的最低位
+        int bit = n & 1;
+
+        // 将bit移到reversed的相应位置
+        reversed = (reversed << 1) | bit;
+
+        // 将n右移一位，处理下一位
+        n >>= 1;
+    }
+
+    return reversed;
 }

@@ -1,0 +1,51 @@
+HWND hMainWnd, hLeftTop, hLeftBottom, hRight;
+hLeftTop窗口中按钮按下后,在hRight调用onCliecked函数
+下面这样对吗?
+LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
+                            LPARAM lParam) {
+    // 根据窗口句柄判断当前是哪个子窗口
+    if (hwnd == hLeftTop) {
+        // 处理左上子窗口的消息
+        switch (uMsg) {
+            case WM_PAINT:
+                // 绘制左上窗口内容
+                break;
+                // 其他左上窗口的消息处理
+        }
+    } else if (hwnd == hLeftBottom) {
+        // 处理左下子窗口的消息
+        switch (uMsg) {
+            case WM_PAINT:
+                // 绘制左下窗口内容
+                break;
+                // 其他左下窗口的消息处理
+        }
+    } else if (hwnd == hRight) {
+        // 处理右侧子窗口的消息
+        switch (uMsg) {
+            case WM_PAINT: {
+                PAINTSTRUCT ps;
+                HDC hdc = BeginPaint(hRight, &ps);
+                // 绘制图像动画
+                if (isAnimating) {
+                    AnimateImage(hdc, imageanime);  // 假设这是一个动画函数
+                }
+                EndPaint(hRight, &ps);
+            }
+                return 0;
+            // 其他右侧窗口的消息处理
+            case WM_COMMAND:
+                onCliecked(hRight, wParam);
+                return 0;
+            case WM_TIMER:
+                onTimer(hRight);
+                break;
+            case WM_MAKEGUAXIANG:
+                showGuaImage(hRight);
+                DrawTextLines();
+                KillTimer(hRight, 1);
+                break;
+        }
+    }
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}

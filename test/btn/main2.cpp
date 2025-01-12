@@ -75,7 +75,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             MessageBox(hwnd, L"动画完成！", L"提示", MB_OK);
             return 0;
         case WM_MAKEGUAXIANG:
-
             makeGuaXiang(guaXiang, shangGua, xiaGua);
             MessageBox(NULL, guaString.c_str(), L"卦象", MB_OK);
             return 0;

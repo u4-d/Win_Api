@@ -1,4 +1,3 @@
-// #define UNICODE
 #include <windows.h>
 #include <gdiplus.h>
 #include <string>
@@ -9,13 +8,15 @@
 
 using namespace Gdiplus;
 using namespace std;
+
 #define BUTTON1 1001
 #define BUTTON2 1002
 #define BUTTON_ANIMATE 1003
 #define WM_ANIMATION_DONE (WM_USER + 1)  // 自定义消息
 #define WM_MAKEGUAXIANG (WM_USER + 2)    // 6次以后制作卦象
-HINSTANCE hInst;                         // 当前实例
-HWND bt1Hwnd, bt2Hwnd;                   // 按钮1,2代码
+
+const wchar_t CLASS_NAME[] = L"Main Window Class";
+const wchar_t CHILD_CLASS_NAME[] = L"Child Window Class";
 BOOL bt1Vis = TRUE;  // 按钮1是否可以点击 按下6次后不可再点击
 int btCnt = 0;       // 按钮按下次数
 int guaXiang = 0;    // 制作的卦象
@@ -35,6 +36,10 @@ wstring imgFileName[] = {
     L"./img/s0.png", L"./img/s1.png", L"./img/s2.png", L"./img/s3.png",
     L"./img/s4.png", L"./img/s5.png", L"./img/s6.png", L"./img/s7.png",
 };
+// 动画状态变量
+bool isAnimating = false;
+int frame = 0;
+const int maxFrames = 100;
 // 设置显示的固定位置和大小
 
 struct imgPos {
@@ -51,32 +56,30 @@ struct guaPosSize {
 };
 guaPosSize shangImgPos;
 guaPosSize xiaImgPos;
-// 动画状态变量
-bool isAnimating = false;
-int frame = 0;
-const int maxFrames = 100;
 
-// 主窗口
-RECT clientRect = {500, 200, 1500, 900};
-RECT wordsRect = {5, 110, 400, 900};   // 显示爻的区域
-RECT animaRect = {400, 0, 1500, 900};  // 动画区域
-HWND mainHwnd;
-// Register the window class
-const wchar_t CLASS_NAME[] = L"主窗口";
+// 窗口代码 主窗口 按键窗口 文字窗口 动画窗口
+HWND hMainWnd, hLeftTop, hLeftBottom, hRight;
+HWND bt1Hwnd, bt2Hwnd;  // 按钮1,2代码
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-void AnimateImage(HDC hdc, const std::wstring& imagePath, RECT clientRect);
-void ClearWindow(HWND hwnd);
-void createMainWindow(HINSTANCE hInstance, int nCmdShow);
-void DisplayImage(HWND hwnd, const std::wstring& imagePath, guaPosSize ps);
-void GetWindowCenter(HWND hwnd, int& centerX, int& centerY);
-void showGuaImage(HWND hwnd);
-void createButton(HWND hwnd, RECT clientRect);
+LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+void clearWindow(HWND hwnd);
 int generateRandomBit();
-void modifyInt(int& num, int bit);
-void makeGua(HWND hwnd);
-void clieckedAnimate(HWND hwnd, WPARAM wParam);
-void onTimer(HWND hwnd, RECT clientRect);
+
+// 按键窗口函数
+void createButton(HWND hwnd);
 void resetBtnVis();
+void makeGua(HWND hwnd);
+void modifyInt(int& num, int bit);
+
+// 文字窗口函数
+int reverseBits(int n);
+void showGuaImage(HWND hwnd);
 void DrawTextLines();
-void setRect();
+
+// 动画窗口函数
+void onCliecked(HWND hwnd, WPARAM wParam);
+void AnimateImage(HDC hdc, const std::wstring& imagePath);
+void onTimer(HWND hwnd);
+void DisplayImage(HWND hwnd, const std::wstring& imagePath, guaPosSize ps);
