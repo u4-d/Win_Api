@@ -1,7 +1,6 @@
-需要修改2个问题
-1.单击按键BUTTON_ANIMATE后会有残像,需要清除掉
-2.主窗口大小发生变化时需要擦除hLeftBottom和hRight,并按比例重新绘制3个子窗口
 #include "sWindow.h"
+
+// 程序入口
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow) {
     // 初始化 GDI+
@@ -98,6 +97,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                        TRUE);
             MoveWindow(hRight, leftWidth, 0, rightWidth, height, TRUE);
             clearWindow(hwnd);
+            clearWindow(hLeftBottom);
+            clearWindow(hRight);
             return 0;
         }
 
@@ -194,6 +195,7 @@ void clearWindow(HWND hwnd) {
     FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
     // 结束绘制
     EndPaint(hwnd, &ps);
+    // InvalidateRect(hwnd, NULL, TRUE);  // 强制窗口重绘
 }
 void clearWindow_old(HWND hwnd) {
     HDC hdc = GetDC(hwnd);  // 获取设备上下文
@@ -311,7 +313,7 @@ void onTimer_old(HWND hwnd) {
         }
     }
 }
-void onTimer(HWND hwnd) {
+void onTimer_old2(HWND hwnd) {
     if (frame < maxFrames) {
         InvalidateRect(hwnd, NULL, TRUE);  // 触发窗口重绘
     } else {
@@ -321,6 +323,27 @@ void onTimer(HWND hwnd) {
         if (btCnt == 6) {
             //  发送自定义消息触发后续操作
             PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
+        }
+    }
+}
+
+void onTimer(HWND hwnd) {
+    if (frame < maxFrames) {
+        HDC hdc = GetDC(hwnd);
+        RECT rc;
+        GetClientRect(hwnd, &rc);
+
+        // 使用背景色填充目标区域，清除残影
+        FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
+
+        ReleaseDC(hwnd, hdc);              // 释放设备上下文
+        InvalidateRect(hwnd, NULL, TRUE);  // 触发窗口重绘
+    } else {
+        KillTimer(hwnd, 1);  // 停止定时器
+        frame = 0;           // 重置帧计数
+        clearWindow(hwnd);   // 清除窗口内容
+        if (btCnt == 6) {
+            PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);  // 触发后续操作
         }
     }
 }

@@ -1,7 +1,6 @@
-需要修改2个问题
-1.单击按键BUTTON_ANIMATE后会有残像,需要清除掉
-2.主窗口大小发生变化时需要擦除hLeftBottom和hRight,并按比例重新绘制3个子窗口
 #include "sWindow.h"
+
+// 程序入口
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow) {
     // 初始化 GDI+
@@ -12,15 +11,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     WNDCLASS wc = {0};
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wc.lpszClassName = L"MainWindow";
     RegisterClass(&wc);
 
     WNDCLASS subWc = {0};
     subWc.lpfnWndProc = SubWndProc;
     subWc.hInstance = hInstance;
+    subWc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     subWc.lpszClassName = L"SubWindow";
     RegisterClass(&subWc);
 
+    // 在屏幕中心创建主窗口
     hMainWnd = CreateWindowEx(
         0, wc.lpszClassName, L"伏羲八卦", WS_OVERLAPPEDWINDOW,
         (GetSystemMetrics(SM_CXSCREEN) - 1000) / 2,  // X position (centered)
@@ -71,35 +73,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
             // 创建按钮
             CreateWindow(
-                L"BUTTON", L"Animate", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                L"BUTTON", L"Show Image", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 10, 10, 100, 30, hLeftTop, (HMENU)BUTTON_ANIMATE,
                 (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 
             CreateWindow(
-                L"BUTTON", L"Reset", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 10,
-                50, 100, 30, hLeftTop, (HMENU)BUTTON_RESET,
+                L"BUTTON", L"Show Text", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+                10, 50, 100, 30, hLeftTop, (HMENU)BUTTON_RESET,
                 (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
             return 0;
         }
 
-        case WM_SIZE: {
-            RECT rect;
-            GetClientRect(hwnd, &rect);
-
-            int width = rect.right - rect.left;
-            int height = rect.bottom - rect.top;
-            int leftWidth = width * 40 / 100;
-            int rightWidth = width - leftWidth;
-            int topHeight = height * 3 / 10;
-            int bottomHeight = height - topHeight;
-
-            MoveWindow(hLeftTop, 0, 0, leftWidth, topHeight, TRUE);
-            MoveWindow(hLeftBottom, 0, topHeight, leftWidth, bottomHeight,
-                       TRUE);
-            MoveWindow(hRight, leftWidth, 0, rightWidth, height, TRUE);
-            clearWindow(hwnd);
+        case WM_SIZE:
+            AdjustChildWindows(hwnd);
             return 0;
-        }
 
         case WM_DESTROY:
             PostQuitMessage(0);
@@ -115,14 +102,14 @@ LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
         case WM_COMMAND:
             if (LOWORD(wParam) == BUTTON_ANIMATE) {  // Animate 按钮
                 isAnimating = true;
-                // InvalidateRect(hRight, NULL, TRUE);
+                InvalidateRect(hRight, NULL, TRUE);
                 InvalidateRect(hLeftBottom, NULL, TRUE);
                 //  frame = 0;                      // 初始化帧计数
                 SetTimer(hRight, 1, 30, NULL);  // 设置定时器，每50ms触发一次
             } else if (LOWORD(wParam) == BUTTON_RESET) {  // Reset 按钮
                 isAnimating = false;
-                // InvalidateRect(hRight, NULL, TRUE);
-                // InvalidateRect(hLeftBottom, NULL, TRUE);
+                InvalidateRect(hRight, NULL, TRUE);
+                InvalidateRect(hLeftBottom, NULL, TRUE);
             }
             return 0;
         case WM_TIMER:
@@ -133,11 +120,6 @@ LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
         case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
-
-            // 清除背景
-            // RECT rect;
-            // GetClientRect(hwnd, &rect);
-            // FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
 
             if (hwnd == hLeftBottom && isAnimating) {
                 drawYao(1, L"./img/yin.jpg");
@@ -150,6 +132,23 @@ LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
         }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+// 调整子窗口的大小和位置
+void AdjustChildWindows(HWND hwnd) {
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+
+    int width = rect.right - rect.left;
+    int height = rect.bottom - rect.top;
+    int leftWidth = width * 40 / 100;
+    int rightWidth = width - leftWidth;
+    int topHeight = height * 3 / 10;
+    int bottomHeight = height - topHeight;
+
+    MoveWindow(hLeftTop, 0, 0, leftWidth, topHeight, TRUE);
+    MoveWindow(hLeftBottom, 0, topHeight, leftWidth, bottomHeight, TRUE);
+    MoveWindow(hRight, leftWidth, 0, rightWidth, height, TRUE);
 }
 
 void AnimateImage(HDC hdc, const std::wstring& imagePath) {
@@ -194,13 +193,6 @@ void clearWindow(HWND hwnd) {
     FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
     // 结束绘制
     EndPaint(hwnd, &ps);
-}
-void clearWindow_old(HWND hwnd) {
-    HDC hdc = GetDC(hwnd);  // 获取设备上下文
-    RECT rc;
-    GetClientRect(hwnd, &rc);                        // 获取窗口客户区
-    FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));  // 使用背景色填充
-    ReleaseDC(hwnd, hdc);                            // 释放设备上下文
 }
 
 void onCliecked(HWND hwnd, WPARAM wParam) {
@@ -293,7 +285,7 @@ void modifyInt(int& num, int bit) {
     }
 }
 
-void onTimer_old(HWND hwnd) {
+void onTimer(HWND hwnd) {
     if (isAnimating) {
         HDC hdc = GetDC(hwnd);
         InvalidateRect(hwnd, nullptr, TRUE);  // 强制重绘
@@ -302,8 +294,9 @@ void onTimer_old(HWND hwnd) {
 
         if (frame >= maxFrames) {
             isAnimating = false;  // 动画结束
+            frame = 0;            // 重置帧计数
             KillTimer(hwnd, 1);   // 停止定时器
-            clearWindow(hwnd);
+            // clearWindow(hwnd);
             if (btCnt == 6) {
                 //  发送自定义消息触发后续操作
                 PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
@@ -311,13 +304,13 @@ void onTimer_old(HWND hwnd) {
         }
     }
 }
-void onTimer(HWND hwnd) {
+void onTimer_old(HWND hwnd) {
     if (frame < maxFrames) {
         InvalidateRect(hwnd, NULL, TRUE);  // 触发窗口重绘
     } else {
         KillTimer(hwnd, 1);  // 停止定时器
         frame = 0;           // 重置帧计数
-        clearWindow(hwnd);   // hRight
+        // clearWindow(hwnd);
         if (btCnt == 6) {
             //  发送自定义消息触发后续操作
             PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
@@ -418,21 +411,4 @@ void drawYao(int i, const std::wstring& imagePath) {
     // 清理资源
     ReleaseDC(hLeftBottom, hdc);
     GdiplusShutdown(gdiplusToken);
-}
-
-// 调整子窗口的大小和位置
-void AdjustChildWindows(HWND hwnd) {
-    RECT rect;
-    GetClientRect(hwnd, &rect);
-
-    int width = rect.right - rect.left;
-    int height = rect.bottom - rect.top;
-    int leftWidth = width * 40 / 100;
-    int rightWidth = width - leftWidth;
-    int topHeight = height * 3 / 10;
-    int bottomHeight = height - topHeight;
-    clearWindow(hwnd);
-    MoveWindow(hLeftTop, 0, 0, leftWidth, topHeight, TRUE);
-    MoveWindow(hLeftBottom, 0, topHeight, leftWidth, bottomHeight, TRUE);
-    MoveWindow(hRight, leftWidth, 0, rightWidth, height, TRUE);
 }

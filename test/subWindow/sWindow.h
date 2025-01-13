@@ -15,7 +15,7 @@ using namespace std;
 #define WM_ANIMATION_DONE (WM_USER + 1)  // 自定义消息
 #define WM_MAKEGUAXIANG (WM_USER + 2)    // 6次以后制作卦象
 
-ULONG_PTR gdiplusToken;
+// ULONG_PTR gdiplusToken;
 const wchar_t CLASS_NAME[] = L"Main Window Class";
 const wchar_t CHILD_CLASS_NAME[] = L"Child Window Class";
 BOOL bt1Vis = TRUE;  // 按钮1是否可以点击 按下6次后不可再点击
@@ -70,6 +70,7 @@ LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 void clearWindow(HWND hwnd);
 int generateRandomBit();
+void AdjustChildWindows(HWND hwnd);
 
 // 按键窗口函数
 void createButton(HWND hwnd);

@@ -4,6 +4,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow) {
     // 初始化 GDI+
+    ULONG_PTR gdiplusToken;
     GdiplusStartupInput gdiplusStartupInput;
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
@@ -19,12 +20,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     subWc.lpszClassName = L"SubWindow";
     RegisterClass(&subWc);
 
-    HWND hwnd = CreateWindow(wc.lpszClassName, L"Window Layout Example",
-                             WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                             800, 600, NULL, NULL, hInstance, NULL);
-
-    ShowWindow(hwnd, nCmdShow);
-    UpdateWindow(hwnd);
+    hMainWnd = CreateWindowEx(
+        0, wc.lpszClassName, L"伏羲八卦", WS_OVERLAPPEDWINDOW,
+        (GetSystemMetrics(SM_CXSCREEN) - 1000) / 2,  // X position (centered)
+        (GetSystemMetrics(SM_CYSCREEN) - 800) / 2,   // Y position (centered)
+        1000, 800,                                   // Width and Height
+        nullptr, nullptr, wc.hInstance, nullptr);
+    ShowWindow(hMainWnd, nCmdShow);
+    UpdateWindow(hMainWnd);
 
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
@@ -93,7 +96,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             MoveWindow(hLeftBottom, 0, topHeight, leftWidth, bottomHeight,
                        TRUE);
             MoveWindow(hRight, leftWidth, 0, rightWidth, height, TRUE);
-
+            clearWindow(hwnd);
             return 0;
         }
 
@@ -111,27 +114,34 @@ LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
         case WM_COMMAND:
             if (LOWORD(wParam) == BUTTON_ANIMATE) {  // Animate 按钮
                 isAnimating = true;
-                InvalidateRect(hRight, NULL, TRUE);
+                // InvalidateRect(hRight, NULL, TRUE);
                 InvalidateRect(hLeftBottom, NULL, TRUE);
+                //  frame = 0;                      // 初始化帧计数
+                SetTimer(hRight, 1, 30, NULL);  // 设置定时器，每50ms触发一次
             } else if (LOWORD(wParam) == BUTTON_RESET) {  // Reset 按钮
                 isAnimating = false;
-                InvalidateRect(hRight, NULL, TRUE);
-                InvalidateRect(hLeftBottom, NULL, TRUE);
+                // InvalidateRect(hRight, NULL, TRUE);
+                // InvalidateRect(hLeftBottom, NULL, TRUE);
             }
             return 0;
-
+        case WM_TIMER:
+            if (hwnd == hRight) {
+                onTimer(hwnd);
+            }
+            return 0;
         case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
 
-            if (hwnd == hLeftBottom) {
-                if (isAnimating) {
-                    drawYao(1, L"./img/yin.jpg");
-                }
-            } else if (hwnd == hRight) {
-                if (isAnimating) {
-                    AnimateImage(hdc, L"example.png");  // 替换为实际图片路径
-                }
+            // 清除背景
+            // RECT rect;
+            // GetClientRect(hwnd, &rect);
+            // FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
+
+            if (hwnd == hLeftBottom && isAnimating) {
+                drawYao(1, L"./img/yin.jpg");
+            } else if (hwnd == hRight && isAnimating) {
+                AnimateImage(hdc, L"./img/yang.jpg");
             }
 
             EndPaint(hwnd, &ps);
@@ -183,6 +193,13 @@ void clearWindow(HWND hwnd) {
     FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
     // 结束绘制
     EndPaint(hwnd, &ps);
+}
+void clearWindow_old(HWND hwnd) {
+    HDC hdc = GetDC(hwnd);  // 获取设备上下文
+    RECT rc;
+    GetClientRect(hwnd, &rc);                        // 获取窗口客户区
+    FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));  // 使用背景色填充
+    ReleaseDC(hwnd, hdc);                            // 释放设备上下文
 }
 
 void onCliecked(HWND hwnd, WPARAM wParam) {
@@ -275,7 +292,7 @@ void modifyInt(int& num, int bit) {
     }
 }
 
-void onTimer(HWND hwnd) {
+void onTimer_old(HWND hwnd) {
     if (isAnimating) {
         HDC hdc = GetDC(hwnd);
         InvalidateRect(hwnd, nullptr, TRUE);  // 强制重绘
@@ -290,6 +307,19 @@ void onTimer(HWND hwnd) {
                 //  发送自定义消息触发后续操作
                 PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
             }
+        }
+    }
+}
+void onTimer(HWND hwnd) {
+    if (frame < maxFrames) {
+        InvalidateRect(hwnd, NULL, TRUE);  // 触发窗口重绘
+    } else {
+        KillTimer(hwnd, 1);  // 停止定时器
+        frame = 0;           // 重置帧计数
+        clearWindow(hwnd);   // hRight
+        if (btCnt == 6) {
+            //  发送自定义消息触发后续操作
+            PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
         }
     }
 }
@@ -387,4 +417,21 @@ void drawYao(int i, const std::wstring& imagePath) {
     // 清理资源
     ReleaseDC(hLeftBottom, hdc);
     GdiplusShutdown(gdiplusToken);
+}
+
+// 调整子窗口的大小和位置
+void AdjustChildWindows(HWND hwnd) {
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+
+    int width = rect.right - rect.left;
+    int height = rect.bottom - rect.top;
+    int leftWidth = width * 40 / 100;
+    int rightWidth = width - leftWidth;
+    int topHeight = height * 3 / 10;
+    int bottomHeight = height - topHeight;
+    clearWindow(hwnd);
+    MoveWindow(hLeftTop, 0, 0, leftWidth, topHeight, TRUE);
+    MoveWindow(hLeftBottom, 0, topHeight, leftWidth, bottomHeight, TRUE);
+    MoveWindow(hRight, leftWidth, 0, rightWidth, height, TRUE);
 }
