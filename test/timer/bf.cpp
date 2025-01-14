@@ -1,4 +1,3 @@
-// SetTimer使用回调函数处理Windows消息
 #include "myTimer.h"
 
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -52,7 +51,6 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    // static RECT clientRect;
     switch (uMsg) {
         case WM_CREATE:
             createSubWindow(hwnd);
@@ -92,18 +90,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             wordsX = wordsRect.right * 0.2f;   // 30% 宽度
             wordsY = wordsRect.bottom * 0.7f;  // 70% 高度
             clearWindow(hwnd);
-            return 0;
         }
-        case WM_TIMER:
-
-            return 0;
-        case WM_ANIMATION_DONE:  // 自定义消息，动画完成后执行的操作
-            // 在这里添加你希望在动画完成后执行的代码
-            MessageBox(hwnd, L"动画完成！", L"提示", MB_OK);
             return 0;
 
         case WM_DESTROY:
-            KillTimer(hwnd, 1);
+            // KillTimer(hwnd, 1);
             PostQuitMessage(0);
             return 0;
     }
@@ -121,21 +112,17 @@ LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
 
             } else if (LOWORD(wParam) == BUTTON_RESET) {
                 resetVar();
-                EnableWindow(bt1Hwnd, bt1Vis);
+                EnableWindow(btHWNDAnime, bt1Vis);
             }
             return 0;
         case WM_MAKEGUAXIANG:
             // MessageBox(hwnd, L"Received WM_MAKEGUAXIANG!", L"Message",
             // MB_OK);
-
-            makeGuaXiang(guaXiang, shangGua, xiaGua);
-            // MessageBox(NULL, guaString.c_str(), L"卦象", MB_OK);
             showGuaImage(hRight);
             // DrawTextLines();
             return 0;
         case WM_ANIMATION_DONE:  // 自定义消息，动画完成后执行的操作
             // 在这里添加你希望在动画完成后执行的代码
-            // MessageBox(hwnd, L"动画完成！", L"提示", MB_OK);
             return 0;
         case WM_PAINT: {
             PAINTSTRUCT ps;
@@ -152,7 +139,6 @@ VOID CALLBACK TimerProc(HWND hwnd, UINT message, UINT_PTR iTimerID,
                         DWORD dwTime) {
     if (isAnimating) {
         HDC hdc = GetDC(hwnd);
-        // InvalidateRect(hwnd, nullptr, TRUE);  // 强制重绘
         AnimateImage(hdc, imageanime, clientRect);
         ReleaseDC(hwnd, hdc);
 
@@ -194,12 +180,12 @@ void createSubWindow(HWND hwnd) {
                      (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 
     // 创建按钮
-    bt1Hwnd =
+    btHWNDAnime =
         CreateWindow(L"BUTTON", L"摇挂", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                      10, 10, 100, 30, hLeftTop, (HMENU)BUTTON_ANIMATE,
                      (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
 
-    bt2Hwnd = CreateWindow(
+    btHWNDReset = CreateWindow(
         L"BUTTON", L"重新来过", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 10, 50,
         100, 30, hLeftTop, (HMENU)BUTTON_RESET,
         (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
@@ -305,29 +291,6 @@ void modifyInt(int& num, int bit) {
     }
 }
 
-void makeGuaXiang(int x, int& low, int& hight) {
-    // 提取低 3 位
-    low = x & 7;  // 0b111 (7) 用于保留最低 3 位
-    // 提取 4~6 位（右移 3 位后，取接下来的 3 位）
-    hight = (x >> 3) & 7;  // 右移 3 位后取最低 3 位
-    getBaGua(hight, shangWords, shangSyb);
-    getBaGua(low, xiaWords, xiaSyb);
-    // 使用 std::wstring 来拼接
-    guaString = std::wstring(shangWords) + shangSyb + xiaWords + xiaSyb;
-}
-// 函数：根据参数 bits 查找对应的 words 和 syb
-void getBaGua(int bits, wchar_t*& words, wchar_t*& syb) {
-    for (const auto& item : baGua) {
-        if (item.bits == bits) {
-            words = item.words;
-            syb = item.syb;
-            return;
-        }
-    }
-    words = nullptr;
-    syb = nullptr;
-}
-
 void setRectCenter(HWND hwnd, xy& xy) {
     RECT rc;
     GetClientRect(hwnd, &rc);
@@ -359,7 +322,7 @@ void makeGua(HWND hwnd) {
     if (btCnt >= 6) {
         bt1Vis = FALSE;
         showGuaXiang = true;
-        EnableWindow(bt1Hwnd, bt1Vis);
+        EnableWindow(btHWNDAnime, bt1Vis);
     }
 }
 // 按2进制反转
@@ -459,50 +422,4 @@ void showGuaImage(HWND hwnd) {
         // 如果获取失败，打印错误
         MessageBox(hwnd, L"GetWindowRect失败!", L"提示", MB_OK);
     }
-}
-
-void DrawTextLines() {
-    // 初始化 GDI+
-    GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR gdiplusToken;
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-    // 创建图形对象
-    HDC hdc = GetDC(hLeftBottom);
-    Graphics graphics(hdc);
-    // 创建一个字体对象，选择大小和字体
-    Font font(L"Arial", 18);                  // 选择字体和字号
-    SolidBrush brush(Color(255, 0, 0, 255));  // 蓝色画刷
-
-    // 文本输出的起始位置
-    float x = 200.0f;  // X 坐标
-    float y = 100.0f;  // Y 坐标
-
-    // 循环输出每行文字
-    for (int i = 0; i < 6; ++i) {
-        graphics.DrawString(sixYao[i].c_str(), -1, &font, PointF(x, y), &brush);
-        y += 30.0f;  // 每行之间的间距
-    }
-    // 清理资源
-    ReleaseDC(hLeftBottom, hdc);
-    GdiplusShutdown(gdiplusToken);
-}
-
-// 将整数转换为二进制字符串
-void IntToBinaryString(int value, wchar_t* buf, size_t bufSize) {
-    buf[0] = L'\0';  // 初始化为空字符串
-    size_t index = 0;
-    for (int i = 5; i >= 0; --i) {
-        // 使用位运算获取每一位的值
-        wchar_t bit = (value & (1 << i)) ? L'1' : L'0';
-        buf[index++] = bit;
-        if (index == bufSize - 1) break;  // 防止溢出
-    }
-    buf[index] = L'\0';  // 添加字符串结束符
-}
-
-void showInt(HWND hwnd, int n, wstring msg) {
-    wchar_t a[7];
-    IntToBinaryString(n, a, 7);
-    wstring s = msg + (wstring)a;
-    MessageBox(hwnd, s.c_str(), L"提示", MB_OK);
 }
