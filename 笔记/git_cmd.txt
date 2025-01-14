@@ -1,0 +1,14 @@
+
+撤销更改
+git checkout -- .
+
+Permission denied时
+Error: Permission denied (publickey)
+ssh -vT git@github.com
+
+删除本地文件并将这种删除同步到远程仓库
+git rm file.txt
+git add -u
+git commit -m "删除本地文件并同步到远程"
+git push 
+

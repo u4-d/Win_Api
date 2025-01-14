@@ -1,7 +1,0 @@
-�ָ������ļ������һ���ύ��״̬
-
-git checkout -- .
-
-
-Error: Permission denied (publickey)
-ssh -vT git@github.com
