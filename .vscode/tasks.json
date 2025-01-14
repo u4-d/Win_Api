@@ -8,7 +8,7 @@
 			"args": [
 				"/DUNICODE", 
 				"/D_UNICODE",
-				//"/D_DEBUG",
+				"/D_DEBUG",
 				"/utf-8",
 				"/Zc:wchar_t",
 				"/Zi",
@@ -19,7 +19,7 @@
 				"${file}",
 				"/link",
 				"/subsystem:windows",
-				//"/DEBUG",
+				"/DEBUG",
 				"kernel32.lib", 
 				"user32.lib" ,
 				"gdi32.lib" ,
