@@ -44,9 +44,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    static std::wstring imageYin = L"./img/yin.jpg";  // 替换为你的图片路径
-    static std::wstring imageYang = L"./img/yang.jpg";
-    static std::wstring imageanime = L"";
+    // static std::wstring imageYin = L"./img/yin.jpg";  // 替换为你的图片路径
+    // static std::wstring imageYang = L"./img/yang.jpg";
+    // static std::wstring imageanime = L"";
     static RECT clientRect;
 
     switch (uMsg) {
