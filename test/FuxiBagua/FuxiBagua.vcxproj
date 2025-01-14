@@ -127,21 +127,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h" />
     <ClInclude Include="FuxiBagua.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FuxiBagua.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="FuxiBagua.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="FuxiBagua.ico" />
-    <Image Include="small.ico" />
-    <Image Include="yin.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
