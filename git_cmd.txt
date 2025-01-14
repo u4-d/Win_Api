@@ -1,4 +1,7 @@
-╩ж╦╢кЫспнд╪Ч╣╫вН╨Ср╩╢нлА╫╩╣дв╢л╛
+О©╫ж╦О©╫О©╫О©╫О©╫О©╫О©╫д╪О©╫О©╫О©╫О©╫О©╫О©╫р╩О©╫О©╫О©╫А╫╩О©╫О©╫в╢л╛
 
 git checkout -- .
 
+
+Error: Permission denied (publickey)
+ssh -vT git@github.com
