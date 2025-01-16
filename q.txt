@@ -1,46 +1,138 @@
-PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
-上面的语句运行后为什么没有跳转到case WM_MAKEGUAXIANG:中
-
-LRESULT CALLBACK SubWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
-                            LPARAM lParam) {
-    switch (uMsg) {
-        case WM_COMMAND:
-            if (LOWORD(wParam) == BUTTON_ANIMATE) {
-                btCnt++;
-                // 按下6次后解卦
-                if (btCnt >= 6) {
-                    bt1Vis = FALSE;
-                    PostMessage(hwnd, WM_MAKEGUAXIANG, 0, 0);
-                } else {
-                    int yinYang = generateRandomBit();
-                    modifyInt(guaXiang, yinYang);
-                    if (yinYang == 1) {
-                        imageanime = imageYang;
-                    } else {
-                        imageanime = imageYin;
-                    }
-                    // 按下按钮后开始动画
-                    isAnimating = true;
-                    frame = 0;  // 重置动画帧
-                    SetTimer(hRight, 1, 30, TimerProc);
-                }
-            } else if (LOWORD(wParam) == BUTTON_RESET) {
-                resetBtnVis();
-                EnableWindow(bt1Hwnd, bt1Vis);
-            }
-            return 0;
-        case WM_MAKEGUAXIANG:
-            EnableWindow(bt1Hwnd, bt1Vis);
-            makeGuaXiang(guaXiang, shangGua, xiaGua);
-            // MessageBox(NULL, guaString.c_str(), L"卦象", MB_OK);
-            return 0;
-        case WM_PAINT: {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-
-            EndPaint(hwnd, &ps);
-            return 0;
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(Windows) 启动",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            //"console": "externalTerminal",
+            "preLaunchTask": "GUI Build"  // 指定编译任务
+        },
+        {
+            "name": "(Console) 启动",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "console": "externalTerminal",            
+            "preLaunchTask": "Console Build"  // 指定编译任务
         }
-    }
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    ]
 }
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "GUI Build",
+			"command": "cl.exe",
+			"args": [
+				"/DUNICODE", 
+				"/D_UNICODE",
+				"/D_DEBUG",
+				"/utf-8",
+				"/Zc:wchar_t",
+				"/Zi",
+				"/EHsc",
+				"/nologo",
+				"/MTd",
+				"/Fe${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"${file}",
+				"/link",
+				"/subsystem:windows",
+				"/DEBUG",
+				"kernel32.lib", 
+				"user32.lib" ,
+				"gdi32.lib" 
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build",
+			"detail": "编译器: cl.exe"			
+		},
+		{
+			"type": "cppbuild",
+			"label": "Console Build",
+			"command": "cl.exe",
+			"args": [
+				"/DUNICODE", 
+				"/D_UNICODE",
+				"/D_DEBUG",
+				"/utf-8",
+				"/Zc:wchar_t",
+				"/Zi",
+				"/EHsc",
+				"/nologo",
+				"/MTd",
+				"/Fe${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"${file}",
+				"/link",
+				"/subsystem:Console",
+				"/DEBUG",
+				//"/NODEFAULTLIB:libcpmtd.lib"
+				//"kernel32.lib", 
+				//"user32.lib" ,
+				//"gdi32.lib" ,
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build",
+			"detail": "编译器: cl.exe"			
+		},
+		{
+			"type": "cppbuild",
+			"label": "GUI Release",
+			"command": "cl.exe",
+			"args": [
+				"/DUNICODE", 
+				"/D_UNICODE",
+				//"/D_DEBUG",
+				"/utf-8",
+				"/Zc:wchar_t",
+				"/Zi",
+				"/EHsc",
+				"/nologo",
+				"/MT",//静态 不需要打包 VC DLL
+				"/Fe${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"${file}",
+				"/link",
+				"/subsystem:windows",
+				//"/DEBUG",
+				"kernel32.lib", 
+				"user32.lib" ,
+				"gdi32.lib" 
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build",
+			"detail": "编译器: cl.exe"			
+		},
+	]
+}
+
+修改为使用wt或者powersheel编译,现在运行后使用的是cmd命令启动编译
+cmd /c chcp 65001>nul && cl.exe
+改为wt或者powershell

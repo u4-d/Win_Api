@@ -6,7 +6,7 @@
 			"label": "GUI Build",
 			"command": "cl.exe",
 			"args": [
-				"/DUNICODE", 
+				"/DUNICODE",
 				"/D_UNICODE",
 				"/D_DEBUG",
 				"/utf-8",
@@ -20,9 +20,9 @@
 				"/link",
 				"/subsystem:windows",
 				"/DEBUG",
-				"kernel32.lib", 
-				"user32.lib" ,
-				"gdi32.lib" 
+				"kernel32.lib",
+				"user32.lib",
+				"gdi32.lib"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
@@ -31,14 +31,14 @@
 				"$msCompile"
 			],
 			"group": "build",
-			"detail": "编译器: cl.exe"			
+			"detail": "编译器: cl.exe"
 		},
 		{
 			"type": "cppbuild",
 			"label": "Console Build",
 			"command": "cl.exe",
 			"args": [
-				"/DUNICODE", 
+				"/DUNICODE",
 				"/D_UNICODE",
 				"/D_DEBUG",
 				"/utf-8",
@@ -64,14 +64,14 @@
 				"$msCompile"
 			],
 			"group": "build",
-			"detail": "编译器: cl.exe"			
+			"detail": "编译器: cl.exe"
 		},
 		{
 			"type": "cppbuild",
 			"label": "GUI Release",
 			"command": "cl.exe",
 			"args": [
-				"/DUNICODE", 
+				"/DUNICODE",
 				"/D_UNICODE",
 				//"/D_DEBUG",
 				"/utf-8",
@@ -79,15 +79,15 @@
 				"/Zi",
 				"/EHsc",
 				"/nologo",
-				"/MT",//静态 不需要打包 VC DLL
+				"/MT", //静态 不需要打包 VC DLL
 				"/Fe${fileDirname}\\${fileBasenameNoExtension}.exe",
 				"${file}",
 				"/link",
 				"/subsystem:windows",
 				//"/DEBUG",
-				"kernel32.lib", 
-				"user32.lib" ,
-				"gdi32.lib" 
+				"kernel32.lib",
+				"user32.lib",
+				"gdi32.lib"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
@@ -96,7 +96,7 @@
 				"$msCompile"
 			],
 			"group": "build",
-			"detail": "编译器: cl.exe"			
+			"detail": "编译器: cl.exe"
 		},
 	]
 }
