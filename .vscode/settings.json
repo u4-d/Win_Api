@@ -65,18 +65,4 @@
     },
     "editor.formatOnSave": true,
     "workbench.startupEditor": "none",
-    //"terminal.integrated.defaultProfile.windows": "Command Prompt",
-    /*
-    "terminal.integrated.env.windows": {
-        "LANG": "zh_CN.UTF-8"
-    },
-    "terminal.integrated.fontFamily": "Consolas, 'Courier New', monospace",
-    
-    "terminal.integrated.profiles.windows": {
-        "Windows Terminal": {
-            "path": "wt.exe"
-        }
-    },
-    "terminal.integrated.defaultProfile.windows": "Windows Terminal",
-    */
 }

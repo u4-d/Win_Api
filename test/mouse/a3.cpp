@@ -184,7 +184,7 @@ LRESULT CALLBACK TooltipWndProc(HWND hWnd, UINT msg, WPARAM wParam,
             HDC hdc = BeginPaint(hWnd, &ps);
             SetBkMode(hdc, TRANSPARENT);
             // 获取存储的索引 i
-            int i = (int)GetProp(hWnd, L"TooltipIndex");  //(intptr_t)
+            int i = (int)(intptr_t)GetProp(hWnd, L"TooltipIndex");  //
 
             // 使用 i 选择不同的文本
             if (i >= 0 && i < 6) {
