@@ -1,0 +1,40 @@
+1. 窗口管理（Window Management）
+创建和管理窗口
+CreateWindowEx: 创建一个窗口，并指定窗口样式、大小、位置等。
+CreateWindow: 创建一个窗口（CreateWindowEx 的简化版）。
+DestroyWindow: 销毁一个窗口，释放与该窗口相关的资源。
+ShowWindow: 控制窗口的显示或隐藏。
+UpdateWindow: 更新窗口的客户区，重新绘制窗口。
+GetMessage: 从消息队列中获取消息。
+TranslateMessage: 将键盘消息转换为字符消息。
+DispatchMessage: 将消息分发到窗口过程进行处理。
+PostMessage: 向窗口发送消息，并将消息放入消息队列中。
+SendMessage: 向窗口发送消息，阻塞直到消息被处理。
+PeekMessage: 检查消息队列中的消息，但不会阻塞。
+SetWindowLong: 设置窗口的长整型属性。
+GetWindowLong: 获取窗口的长整型属性。
+SetWindowPos: 设置窗口的位置、大小、Z顺序等。
+GetWindowRect: 获取窗口的边界矩形。
+MoveWindow: 移动并调整窗口的大小。
+SetWindowText: 设置窗口的标题。
+GetWindowText: 获取窗口的标题。
+IsWindowVisible: 判断窗口是否可见。
+EnableWindow: 启用或禁用窗口。
+SetFocus: 将焦点设置到指定窗口。
+GetFocus: 获取当前具有输入焦点的窗口。
+GetClientRect: 获取窗口客户区的矩形。
+InvalidateRect: 标记一个矩形区域为无效，需要重绘。
+ValidateRect: 验证一个矩形区域，告诉系统该区域已经不需要重绘。
+窗口过程和消息
+DefWindowProc: 默认的窗口过程，用于处理未处理的消息。
+WindowProc: 用户自定义的窗口过程，用于处理窗口消息。
+PostQuitMessage: 向消息队列发送退出消息。
+GetClassName: 获取窗口类的名称。
+窗口类管理
+RegisterClass: 注册一个窗口类，定义窗口的行为和外观。
+RegisterClassEx: 注册扩展的窗口类，提供更多的控制。
+UnregisterClass: 注销窗口类。
+模态对话框
+DialogBox: 创建并显示一个模态对话框。
+DialogBoxParam: 创建并显示带参数的模态对话框。
+EndDialog: 结束一个模态对话框。

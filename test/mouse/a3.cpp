@@ -63,8 +63,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
                         SetProp(hTooltipWnd, L"TooltipIndex",
                                 (HANDLE)(intptr_t)i);
                         // 设置悬浮窗口的位置并显示
-                        SetWindowPos(hTooltipWnd, HWND_TOPMOST, pt.x + 10,
-                                     pt.y + 10, 200, 100, SWP_SHOWWINDOW);
+                        SetWindowPos(hTooltipWnd, HWND_TOPMOST, pt.x + 20,
+                                     pt.y + 10, 200, 60, SWP_SHOWWINDOW);
                         InvalidateRect(hTooltipWnd, NULL,
                                        TRUE);  // 重绘悬浮窗口
                     }
@@ -85,7 +85,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
 
             // 创建 GDI+ Graphics 对象
             Gdiplus::Graphics graphics(hdc);
-
+            // 擦除背景，使用白色清除背景
+            graphics.Clear(Gdiplus::Color(
+                255, 255, 255));  // 设置为白色背景，你可以根据需要选择其他颜色
             // 假设传入的二进制值为 101010 (26)
             int binaryInput = 26;
             setYaoRect(hwnd);
@@ -115,17 +117,18 @@ void InitializeGDIPlus() {
 // 绘制图像的函数
 void DrawBinaryImages(Gdiplus::Graphics* graphics, int binaryInput) {
     // 加载图像
-    Image yangImage(yang);
-    Image yinImage(yin);
-    Gdiplus::Rect imgRect(yaoXY.x, yaoXY.y, imgWidth, imgHeight);
+    Gdiplus::Image yangImage(yang);
+    Gdiplus::Image yinImage(yin);
+    // Gdiplus::Rect imgRect(yaoXY.x, yaoXY.y, imgWidth, imgHeight);
     for (int i = 0; i < 6; i++) {
         // 取出当前二进制位的值 (从高位到低位)
         bool isYang = (binaryInput >> (5 - i)) & 1;
         // 根据二进制位选择要显示的图像
-        Image* imgToDraw = isYang ? &yangImage : &yinImage;
+        Gdiplus::Image* imgToDraw = isYang ? &yangImage : &yinImage;
         // 绘制图像
-        graphics->DrawImage(imgToDraw, imgRect);
-        imgRect.Y -= imgHeight;
+        // graphics->DrawImage(imgToDraw, imgRect);
+        // imgRect.Y -= imgHeight;
+        graphics->DrawImage(imgToDraw, yaoGdiRect[i]);
     }
 }
 
@@ -136,10 +139,11 @@ void setYaoXY(HWND hwnd) {
     yaoXY.y = rc.bottom * 0.7;
 }
 
-Rect ConvertRECTToRect(const RECT& winRect) {
+Gdiplus::Rect ConvertRECTToRect(const RECT& winRect) {
     // 使用 RECT 的 left, top, right, bottom 转换为 Gdiplus::Rect
-    return Rect(winRect.left, winRect.top, winRect.right - winRect.left,
-                winRect.bottom - winRect.top);
+    return Gdiplus::Rect(winRect.left, winRect.top,
+                         winRect.right - winRect.left,
+                         winRect.bottom - winRect.top);
 }
 
 void setYaoRect(HWND hwnd) {
@@ -147,11 +151,8 @@ void setYaoRect(HWND hwnd) {
     int x = yaoXY.x;
     int y = yaoXY.y;
     for (size_t i = 0; i < 6; i++) {
-        yaoWinRect[i].left = x;
-        yaoWinRect[i].right = x + imgWidth;
-        yaoWinRect[i].bottom = y;
-        yaoWinRect[i].top = y - imgHeight;
-        yaoGdiRect[i] = ConvertRECTToRect(yaoWinRect[i]);
+        yaoWinRect[i] = RECT{x, y + 10, x + imgWidth, y + imgHeight - 10};
+        yaoGdiRect[i] = Gdiplus::Rect(x, y, imgWidth, imgHeight);
         y -= imgHeight;
     }
 }
@@ -172,7 +173,7 @@ void CreateTooltipWindow(HINSTANCE hInstance) {
     hTooltipWnd =
         CreateWindowEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE,
                        TEXT("TooltipWindowClass"), NULL, WS_POPUP, 0, 0, 200,
-                       100, NULL, NULL, hInstance, NULL);
+                       70, NULL, NULL, hInstance, NULL);
 }
 
 // 悬浮窗口的窗口过程函数
@@ -196,5 +197,35 @@ LRESULT CALLBACK TooltipWndProc(HWND hWnd, UINT msg, WPARAM wParam,
         }
         default:
             return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
+}
+
+void mouseMove(HWND hwnd) {
+    // 获取鼠标位置
+    POINT pt;
+    GetCursorPos(&pt);
+    ScreenToClient(hwnd, &pt);
+
+    // 判断鼠标是否在目标矩形区域内
+    bool showTooltip = false;
+    for (int i = 0; i < 6; i++) {
+        if (PtInRect(&yaoWinRect[i], pt)) {
+            showTooltip = true;
+            if (hTooltipWnd) {
+                // 使用 SetProp 存储当前的索引 i
+                SetProp(hTooltipWnd, L"TooltipIndex", (HANDLE)(intptr_t)i);
+                // 设置悬浮窗口的位置并显示
+                SetWindowPos(hTooltipWnd, HWND_TOPMOST, pt.x + 20, pt.y + 10,
+                             200, 60, SWP_SHOWWINDOW);
+                InvalidateRect(hTooltipWnd, NULL,
+                               TRUE);  // 重绘悬浮窗口
+            }
+            break;
+        }
+    }
+
+    // 如果鼠标不在矩形区域内，隐藏悬浮窗口
+    if (!showTooltip) {
+        if (hTooltipWnd) ShowWindow(hTooltipWnd, SW_HIDE);
     }
 }

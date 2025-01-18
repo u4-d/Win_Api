@@ -1,0 +1,53 @@
+2. 图形绘制（Graphics Drawing）
+Windows 提供的图形绘制通常通过 GDI（图形设备接口）来完成。GDI 函数包括绘制图形、文本、图像等功能。
+
+基本 GDI 函数
+BeginPaint: 准备一个窗口进行绘制，获取一个设备上下文（DC）。
+EndPaint: 完成窗口的绘制，释放设备上下文。
+CreateCompatibleDC: 创建与当前设备兼容的内存设备上下文。
+DeleteDC: 删除设备上下文。
+CreatePen: 创建一个画笔，用于绘制线条。
+DeleteObject: 删除画笔、画刷或其他 GDI 对象。
+CreateSolidBrush: 创建一个实心画刷，用于填充图形。
+CreatePatternBrush: 创建一个模式画刷，用于填充图形。
+SelectObject: 选择一个 GDI 对象（如笔、画刷）到设备上下文中。
+MoveToEx: 移动当前绘图位置到指定坐标。
+LineTo: 从当前绘图位置绘制一条直线到指定位置。
+Rectangle: 绘制一个矩形。
+Ellipse: 绘制一个椭圆。
+Polygon: 绘制一个多边形。
+PolyLine: 绘制一个由一系列直线段组成的折线。
+Arc: 绘制一个圆弧。
+FloodFill: 填充指定区域。
+TextOut: 在设备上下文中输出文本。
+DrawText: 在设备上下文中绘制文本，支持文本格式化。
+GetTextMetrics: 获取文本的度量信息。
+SetBkMode: 设置文本的背景模式（透明或不透明）。
+SetTextColor: 设置文本颜色。
+SetBkColor: 设置文本的背景颜色。
+StretchBlt: 将源图像拉伸到目标区域。
+BitBlt: 在设备上下文之间进行位图传输。
+GetDC: 获取设备上下文。
+ReleaseDC: 释放设备上下文。
+图像绘制和处理
+LoadImage: 加载图像（位图、图标、光标等）。
+CreateBitmap: 创建一个位图对象。
+GetDIBits: 从位图对象获取位图数据。
+SetDIBits: 向位图对象设置位图数据。
+AlphaBlend: 实现图像的透明度混合。
+TransparentBlt: 绘制带透明度的图像。
+GetPixel: 获取指定点的像素颜色。
+SetPixel: 设置指定点的像素颜色。
+打印功能
+StartDoc: 开始打印文档。
+StartPage: 开始打印页面。
+EndPage: 结束打印页面。
+EndDoc: 结束打印文档。
+画布和图形区域
+GetClipBox: 获取当前裁剪区域的边界矩形。
+IntersectClipRect: 设置裁剪区域为两个矩形的交集。
+SelectClipRgn: 选择一个区域作为裁剪区域。
+ExcludeClipRect: 从当前裁剪区域中排除一个矩形区域。
+绘图属性设置
+SetROP2: 设置绘图操作模式（源和目标之间的混合模式）。
+SetPolyFillMode: 设置多边形的填充模式（奇偶规则或非零规则）。
