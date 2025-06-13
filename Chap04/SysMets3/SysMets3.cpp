@@ -1,7 +1,8 @@
-/*----------------------------------------------------
+﻿/*----------------------------------------------------
    SYSMETS1.C -- System Metrics Display Program No. 1
                  (c) Charles Petzold, 1998
   ----------------------------------------------------*/
+#define UNICODE
 constexpr int WINVER = 0x0500;
 // #define WINVER 0x0500
 #include <windows.h>

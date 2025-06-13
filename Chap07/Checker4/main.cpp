@@ -1,8 +1,8 @@
-/*-------------------------------------------------
+﻿/*-------------------------------------------------
    CHECKER4.C -- Mouse Hit-Test Demo Program No. 4
                  (c) Charles Petzold, 1998
   -------------------------------------------------*/
-
+#define UNICODE
 #include <windows.h>
 
 #define DIVISIONS 5
@@ -71,9 +71,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
             for (x = 0; x < DIVISIONS; x++)
                 for (y = 0; y < DIVISIONS; y++)
                     hwndChild[x][y] = CreateWindow(
-                        szChildClass, NULL, WS_CHILDWINDOW | WS_VISIBLE, 0, 0,
-                        0, 0, hwnd, (HMENU)(y << 8 | x),
-                        (HINSTANCE)GetWindowLong(hwnd, GWLP_HINSTANCE), NULL);
+    szChildClass, NULL, WS_CHILDWINDOW | WS_VISIBLE, 0, 0,
+    0, 0, hwnd,
+    (HMENU)(UINT_PTR)(y << 8 | x),
+    (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
+    NULL);
+
             return 0;
 
         case WM_SIZE:

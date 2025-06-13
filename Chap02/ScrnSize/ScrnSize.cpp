@@ -1,4 +1,4 @@
-/*-----------------------------------------------------
+﻿/*-----------------------------------------------------
    SCRNSIZE.C -- Displays screen size in a message box
                  (c) Charles Petzold, 1998
   -----------------------------------------------------*/
@@ -19,10 +19,7 @@ int CDECL MessageBoxPrintf (const TCHAR * szCaption, const TCHAR * szFormat, ...
 
           // The last argument to wvsprintf points to the arguments
 
-     //_vsntprintf (szBuffer, sizeof (szBuffer) / sizeof (TCHAR), szFormat, pArgList) ;
-     _vsnwprintf_s(szBuffer, sizeof(szBuffer) / sizeof(TCHAR), _TRUNCATE, szFormat, pArgList);
-
-
+    _vsntprintf_s(szBuffer, sizeof(szBuffer) / sizeof(TCHAR), _TRUNCATE, szFormat, pArgList);
           // The va_end macro just zeroes out pArgList for no good reason
 
      va_end (pArgList) ;

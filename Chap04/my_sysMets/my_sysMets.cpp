@@ -10,7 +10,7 @@
 //
 //  my_sysMets.cpp : 定义应用程序的入口点。
 //
-
+#define UNICODE
 #include "my_sysMets.h"
 #include "framework.h"
 

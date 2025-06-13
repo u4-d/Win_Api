@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "D:/code/Cpp/Win_Api/build/Chap07/Checker4/CMakeFiles/Checker4.dir/embed.manifest"

@@ -12,6 +12,7 @@
 				"/utf-8",
 				"/Zc:wchar_t",
 				"/Zi",
+				//"/FS",
 				"/EHsc",
 				"/nologo",
 				"/MTd",

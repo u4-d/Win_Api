@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <windows.h>
 #include "resource.h"
 #define NUMLINES ((int)(sizeof sysmetrics / sizeof sysmetrics[0]))
